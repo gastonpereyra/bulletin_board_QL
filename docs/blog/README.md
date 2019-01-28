@@ -34,14 +34,42 @@ La idea es que en la página se pueda:
 * [ADMIN_00] - Un Admin puede borrar un Post.
 * [ADMIN_01] - Un Admin puede borrar un comentario.
 * [ADMIN_02] - Un Admin puede cambiar el nivel del Usuario hasta Moderador.
-* [ADMIN_03] - Un Admin puede borrar un Usuario que no sea Admin.
+* [ADMIN_03] - Un Admin puede borrar un Usuario.
 * [ADMIN_04] - Solo desde el server se pueden crear los Admin.
 
 ## Estado de Avance:
 
 Recién Empiezo.
 
+* [USUARIO_00]
+* [USUARIO_01]
+* [USUARIO_04]
+* [ADMIN_02]
+* [ADMIN_02]
+* [ADMIN_03]
+* [ADMIN_04]
+
 ## Contenido
 
 * [Parte 1](https://github.com/gastonpereyra/bulletin_board_QL/blob/master/docs/blog/01.md) - Primeras decisiones
+
+### Usuarios
+
+* [Parte 2](https://github.com/gastonpereyra/bulletin_board_QL/blob/master/docs/blog/02.md) - Modelo de Datos
+* [Parte 3](https://github.com/gastonpereyra/bulletin_board_QL/blob/master/docs/blog/03.md) - Base de datos
+* [Parte 4](https://github.com/gastonpereyra/bulletin_board_QL/blob/master/docs/blog/04.md) - App de Prueba
+* [Parte 5](https://github.com/gastonpereyra/bulletin_board_QL/blob/master/docs/blog/05.md) - Usuarios
+* [Parte 6](https://github.com/gastonpereyra/bulletin_board_QL/blob/master/docs/blog/06.md) - Configurar Sequelize
+* [Parte 7](https://github.com/gastonpereyra/bulletin_board_QL/blob/master/docs/blog/07.md) - Query
+* [Parte 8](https://github.com/gastonpereyra/bulletin_board_QL/blob/master/docs/blog/08.md) - Mutations
+* [Parte 9](https://github.com/gastonpereyra/bulletin_board_QL/blob/master/docs/blog/09.md) - Passport (pronto)
+* [Parte 10](https://github.com/gastonpereyra/bulletin_board_QL/blob/master/docs/blog/10.md) - Apollo Server (pronto)
+* [Parte 11](https://github.com/gastonpereyra/bulletin_board_QL/blob/master/docs/blog/11.md) - UI de App Secundaria (pronto)
+* [Parte 12](https://github.com/gastonpereyra/bulletin_board_QL/blob/master/docs/blog/11.md) - Probar App Secundaria (pronto)
+
+### App Secundaria
+
+1. [APP Secundaria en Glitch (codigo + UI + Playground](https://glitch.com/~user-playground)
+
+2. [APP Secundaria en Github (UI + Playground](https://gastonpereyra.github.io/user_playground/) o [APP Secundaria - Repo](https://github.com/gastonpereyra/user_playground)
 
