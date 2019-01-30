@@ -7,26 +7,24 @@ Contar las cosas que me iban pasando a medida que me iban pasando.
 ## Contenido
 
 * [Parte 1](https://github.com/gastonpereyra/bulletin_board_QL/blob/master/docs/blog/01.md) - Primeras decisiones
+* [Parte 2](https://github.com/gastonpereyra/bulletin_board_QL/blob/master/docs/blog/02.md) - Modelo de Datos
 
 ### Usuarios
 
-* [Parte 2](https://github.com/gastonpereyra/bulletin_board_QL/blob/master/docs/blog/02.md) - Modelo de Datos
 * [Parte 3](https://github.com/gastonpereyra/bulletin_board_QL/blob/master/docs/blog/03.md) - Base de datos
 * [Parte 4](https://github.com/gastonpereyra/bulletin_board_QL/blob/master/docs/blog/04.md) - App de Prueba
 * [Parte 5](https://github.com/gastonpereyra/bulletin_board_QL/blob/master/docs/blog/05.md) - Usuarios
 * [Parte 6](https://github.com/gastonpereyra/bulletin_board_QL/blob/master/docs/blog/06.md) - Configurar Sequelize
 * [Parte 7](https://github.com/gastonpereyra/bulletin_board_QL/blob/master/docs/blog/07.md) - Query
 * [Parte 8](https://github.com/gastonpereyra/bulletin_board_QL/blob/master/docs/blog/08.md) - Mutations
-* [Parte 9](https://github.com/gastonpereyra/bulletin_board_QL/blob/master/docs/blog/09.md) - Passport (pronto)
-* [Parte 10](https://github.com/gastonpereyra/bulletin_board_QL/blob/master/docs/blog/10.md) - Apollo Server (pronto)
-* [Parte 11](https://github.com/gastonpereyra/bulletin_board_QL/blob/master/docs/blog/11.md) - UI de App Secundaria (pronto)
-* [Parte 12](https://github.com/gastonpereyra/bulletin_board_QL/blob/master/docs/blog/11.md) - Probar App Secundaria (pronto)
+* [Parte 9](https://github.com/gastonpereyra/bulletin_board_QL/blob/master/docs/blog/09.md) - Passport
+* [Parte 10](https://github.com/gastonpereyra/bulletin_board_QL/blob/master/docs/blog/10.md) - Apollo Server
+* [Parte 11](https://github.com/gastonpereyra/bulletin_board_QL/blob/master/docs/blog/11.md) - UI de App Secundaria 
 
 ### App Secundaria
 
-1. [APP Secundaria en Glitch (codigo + UI + Playground](https://glitch.com/~user-playground)
-
-2. [APP Secundaria en Github (UI + Playground](https://gastonpereyra.github.io/user_playground/) o [APP Secundaria - Repo](https://github.com/gastonpereyra/user_playground)
+1. [APP Secundaria en Glitch (codigo + UI + Playground)](https://glitch.com/~user-playground)
+2. [APP Secundaria en Github (UI + Playground)](https://gastonpereyra.github.io/user_playground/) o [APP Secundaria - Repo](https://github.com/gastonpereyra/user_playground)
 
 ----
 
