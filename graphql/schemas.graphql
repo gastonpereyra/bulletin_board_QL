@@ -84,7 +84,6 @@ type Query {
   getTags: [Tag]
   getTag(id: Int!): Tag
   getTagByName(name: String!): [Tag]
-  # Comment
 }
 
 type Mutation {
@@ -106,8 +105,6 @@ type Mutation {
   postComment(postId: Int!, message: String!): Comment
   editComment(id: Int!, message: String!): Comment
   deleteComment(id: Int!): Comment
-  # Tag
-  deleteTag(id: Int!): String
   # Like
   giveLike(postId: Int!): Boolean
   giveDislike(postId: Int!): Boolean
