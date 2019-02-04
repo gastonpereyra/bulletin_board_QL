@@ -1,0 +1,114 @@
+""" Datos del Usuario """
+type User {
+  id: Int
+  userName: String
+  email: String
+  # """ Encriptado """
+  # password: String
+  """ 0 = Usuario, 1= Moderador, 2=Admin """
+  role: Int
+  createdAt: String
+  updatedAt: String
+  posts: [Post]
+}
+""" Datos necesarios para Crear/Actualizar un Usuario """
+input UserInput {
+  userName: String
+  email: String
+  password: String
+}
+
+""" Roles posibles de Modificar """
+enum Role {
+  USER
+  MOD
+}
+
+type AuthUser {
+  token: String!
+  userName: String
+}
+
+""" Datos de un Post """
+type Post {
+  id: Int
+  title: String
+  message: String
+  views: Int
+  visible: Boolean
+  likes: Int
+  dislikes: Int
+  author: User
+  comments: [Comment]
+  tags: [Tag]
+  createdAt: String
+  updatedAt: String
+}
+
+""" Datos de un Comentario """
+type Comment {
+  id: Int
+  message: String
+  author: User
+  post: Post
+  createdAt: String
+  updatedAt: String
+}
+
+""" Datos de las Etiquetas """
+type Tag {
+  id: Int
+  name: String
+  posts: [Post]
+}
+
+type Query {
+  # User
+  """ Obtener todos los Usuarios, Solo estando loggeado """
+  getUsers: [User]
+  """ Obtener un Usuario, Solo estando loggeado, si no lo encuentra devuelve nulo """
+  getUser(id: ID!): User
+  """ Obtener un Usuario, Solo estando loggeado """
+  getUserByName(userName: String!): User
+  """ Datos del Usuario loggeado """
+  me: User
+  """ Chequea si esta habilitado el nombre de Usuario """
+  isUserName(userName: String): Boolean
+  """ Chequea si existe el mail """
+  isEmail(email: String): Boolean
+  # Post
+  getPosts: [Post]
+  getPost(id: Int!): Post
+  getPostByTitle(title: String!): [Post]
+  # Tag
+  getTags: [Tag]
+  getTag(id: Int!): Tag
+  getTagByName(name: String!): [Tag]
+  # Comment
+}
+
+type Mutation {
+  """ Loggearse """
+  logIn(userName: String!, password: String!): AuthUser
+  """ Registrarse """
+  signIn(input: UserInput!): AuthUser
+  """ Actualizar Usuario, debe estar Loggeado """
+  updateUser(input: UserInput!): User
+  """ Admin Cambia Roles """
+  changeRole(userId: ID!, role: Role!): User
+  """ Admin Borra Usuarios """
+  deleteUser(id: ID!): User
+  # Post
+  createPost(title: String!, message: String!, tagList: [String]): Post
+  updatePost(id: Int!, title: String, message: String, tagList: [String]): Post
+  deletePost(id: Int!): String
+  # Comment
+  postComment(postId: Int!, message: String!): Comment
+  editComment(id: Int!, message: String!): Comment
+  deleteComment(id: Int!): Comment
+  # Tag
+  deleteTag(id: Int!): String
+  # Like
+  giveLike(postId: Int!): Boolean
+  giveDislike(postId: Int!): Boolean
+}
