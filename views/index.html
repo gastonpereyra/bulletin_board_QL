@@ -1,0 +1,290 @@
+<!-- This is a static file -->
+<!-- served from your routes in server.js -->
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>User-Playground</title>
+    <meta name="description" content="Ejemplo para jugar con Altas y Bajas de Usuario">
+    <link id="favicon" rel="icon" href="https://glitch.com/favicon-app.ico" type="image/x-icon">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/style.css">
+    <script src="/client.js" defer></script>
+    <!-- Uso Bulma y FontAwesome para Maqueteado -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    <!-- Vue.js -->
+    <!-- development version, includes helpful console warnings -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  </head>
+  <body>
+    <main class="hero is-black is-bold is-fullheight" id="main">
+      <!-- Barra Superior-->
+      <div class="hero-head">
+        <nav class="navbar">
+          <div class="container">
+            <!-- Logo de la Aplicación -->
+            <div class="navbar-brand">
+              <a class="navbar-item">
+                <img src="https://cdn.glitch.com/project-avatar/b08b2821-cd06-4b0d-a360-e3ad18bf1a09.png?1548609855452" alt="Logo" title="Jugar con los Usuarios">
+                <strong v-if="token"> Loggeado</strong>
+                <strong v-else> User Playground</strong>
+              </a>
+              <!-- Para usar el menu Desplegable para Moviles -->
+              <span class="navbar-burger burger" data-target="navbarUser" @click="toggleMenu">
+                <span></span>
+                <span></span>
+                <span></span>
+              </span>
+            </div>
+            <!-- Botones del Menu -->
+            <div id="navbarUser" class="navbar-menu" v-bind:class="{ 'is-active': menu}">
+              <div class="navbar-end">
+                <!-- Loggearse -->
+                <span class="navbar-item">
+                  <a class="button is-link is-outlined is-inverted" @click="toggleLogIn" title="login">
+                    <span class="icon">
+                      <i class="fas fa-user"></i>
+                    </span>
+                    <span>LogIn</span>
+                  </a>
+                </span>
+                <!-- Registrarse-->
+                <span class="navbar-item">
+                  <a class="button is-success is-outlined is-inverted" @click="toggleSignIn" title="signin">
+                    <span class="icon">
+                      <i class="fas fa-user-edit"></i>
+                    </span>
+                    <span>Registarse</span>
+                  </a>
+                </span>
+                <!-- Salir -->
+                <span class="navbar-item">
+                  <a class="button is-danger is-outlined is-inverted" @click="userOut" title="login" v-if="token">
+                    <span class="icon">
+                      <i class="fas fa-user-slash"></i>
+                    </span>
+                    <span>Salir</span>
+                  </a>
+                </span>
+                <!-- Para ir al Playground -->
+                <span class="navbar-item">
+                  <a class="button is-dark is-outlined is-inverted" href="/graphql">
+                    <span class="icon">
+                      <i class="fab fa-terminal"></i>
+                    </span>
+                    <span>Playground</span>
+                  </a>
+                </span>
+              </div>
+            </div>
+          </div>
+        </nav>
+      </div>
+      <!-- Modals -->
+      <!-- SignIn -->
+      <div class="modal" v-bind:class="{ 'is-active': modalSignIn}">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+          <header class="modal-card-head">
+            <p class="modal-card-title">Registrarse</p>
+            <button class="delete" aria-label="close" @click="toggleSignIn"></button>
+          </header>
+          <section class="modal-card-body" id="signInForm">
+            <!-- Form -->
+              <div class="field">
+                <label class="label">Nombre de Usuario</label>
+                <div class="control has-icons-left has-icons-right">
+                  <input class="input" v-bind:class="{ 'is-success': userVal}" v-model="username" @change="checkUser" type="text" placeholder="Usuario">
+                  <span class="icon is-small is-left">
+                    <i class="fas fa-user"></i>
+                  </span>
+                  <span class="icon is-small is-right" v-if="userVal">
+                    <i class="fas fa-check" ></i>
+                  </span>
+                </div>
+                <p class="help is-success" v-if="userVal">Valido</p>
+                <p class="help is-danger" v-else>Invalido</p>
+              </div>
+
+              <div class="field">
+                <label class="label">Email</label>
+                <div class="control has-icons-left has-icons-right">
+                  <input class="input" v-bind:class="{ 'is-success': emailVal}" v-model="email" @change="checkEmail" type="email" placeholder="Email">
+                  <span class="icon is-small is-left">
+                    <i class="fas fa-envelope"></i>
+                  </span>
+                  <span class="icon is-small is-right" v-if="emailVal">
+                    <i class="fas fa-check" ></i>
+                  </span>
+                </div>
+                <p class="help is-success" v-if="emailVal">Valido</p>
+                <p class="help is-danger" v-else>Invalido</p>
+              </div>
+              
+              <div class="field">
+                <label class="label">Password</label>
+                <div class="control has-icons-left has-icons-right">
+                  <input class="input" v-bind:class="{ 'is-success': passVal}" v-model="password" @change="checkPassword" type="password">
+                  <span class="icon is-small is-left">
+                    <i class="fas fa-key"></i>
+                  </span>
+                  <span class="icon is-small is-right" v-if="passVal">
+                    <i class="fas fa-check" ></i>
+                  </span>
+                </div>
+                <p class="help is-success" v-if="passVal">Valido</p>
+                <p class="help is-danger" v-else>Invalido</p>
+              </div>
+              <div class="field is-grouped">
+                <div class="control">
+                  <button class="button is-link" @click="register">Registrarse</button>
+                </div>
+              </div>
+          </section>
+        </div>
+      </div>
+      <!-- LogIn -->
+      <div class="modal" v-bind:class="{ 'is-active': modalLogIn}">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+          <header class="modal-card-head">
+            <p class="modal-card-title">Entrar</p>
+            <button class="delete" aria-label="close" @click="toggleLogIn"></button>
+          </header>
+          <section class="modal-card-body" id="logInForm">
+            <!-- Form -->
+              <div class="field">
+                <label class="label">Nombre de Usuario</label>
+                <div class="control has-icons-left has-icons-right">
+                  <input class="input" v-bind:class="{ 'is-success': l_userVal}" v-model="l_username" @change="l_checkUser" type="text" placeholder="Usuario">
+                  <span class="icon is-small is-left">
+                    <i class="fas fa-user"></i>
+                  </span>
+                  <span class="icon is-small is-right" v-if="l_userVal">
+                    <i class="fas fa-check" ></i>
+                  </span>
+                </div>
+                <p class="help is-success" v-if="l_userVal">Valido</p>
+                <p class="help is-danger" v-else>Invalido</p>
+              </div>
+              
+              <div class="field">
+                <label class="label">Password</label>
+                <div class="control has-icons-left has-icons-right">
+                  <input class="input" v-bind:class="{ 'is-success': l_passVal}" v-model="l_password" @change="l_checkPassword" type="password">
+                  <span class="icon is-small is-left">
+                    <i class="fas fa-key"></i>
+                  </span>
+                  <span class="icon is-small is-right" v-if="l_passVal">
+                    <i class="fas fa-check" ></i>
+                  </span>
+                </div>
+                <p class="help is-success" v-if="l_passVal">Valido</p>
+                <p class="help is-danger" v-else>Invalido</p>
+              </div>
+              <div class="field is-grouped">
+                <div class="control">
+                  <button class="button is-link" @click="login">Entrar</button>
+                </div>
+              </div>
+          </section>
+        </div>
+      </div>
+      <!-- Contenido Principal -->
+      <div class="hero-body">
+        <div class="container">
+          <!-- Sin Cargar: Titulo de la App / Cargó: Nombre de la Estación -->
+          <div class="columns is-centered">
+            <div class="column is-one-third">
+              <figure class="image">
+                <img v-if="token" src="https://calendarmedia.blob.core.windows.net/assets/3867334a-8bcc-4f44-9684-3fe63020ec24.png">
+                <img v-else src="https://cdn.glitch.com/project-avatar/b08b2821-cd06-4b0d-a360-e3ad18bf1a09.png?1548609855452" alt="Logo" title="Jugar con los Usuarios">
+              </figure>
+              <div class="buttons is-centered has-addons" v-if="token">
+                <a class="button is-primary">User</a>
+                <a class="button is-primary is-outlined" v-html="u_username"></a>
+              </div>
+              <div class="buttons is-centered has-addons" v-if="token">
+                <a class="button is-primary">Email</a>
+                <a class="button is-primary is-outlined" v-html="u_email"></a>
+              </div>
+              <div class="buttons is-centered has-addons" v-if="token">
+                <a class="button is-primary">Rol</a>
+                <a class="button is-primary is-outlined" v-html="u_role"></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Pie de Pagina -->
+      <div class="hero-foot">
+        <div class="content">
+          <!-- Creditos y links -->
+          <div class="buttons is-centered">
+            
+            <a class="button is-dark is-outlined" href="https://github.com/gastonpereyra" title="Autor">
+              <span class="icon">
+                <i class="fab fa-github"></i>
+              </span>
+              <span>Gaston Pereyra</span>
+            </a>
+
+            <a class="button is-warning is-outlined" href="https://glitch.com" title="Hecho con">
+              <span class="icon">
+                <i class="fas fa-fish"></i>
+              </span>
+              <span>Glitch</span>
+            </a>
+
+            <a class="button is-primary is-outlined" href="https://bulma.io/" title="Hecho con">
+              <span class="icon">
+                <i class="fab fa-blogger-b"></i>
+              </span>
+              <span>Bulma</span>
+            </a>
+
+            <a class="button is-danger is-outlined" href="https://graphql.org/" title="Hecho con">
+              <span class="icon">
+                <i class="fab fa-connectdevelop"></i>
+              </span>
+              <span>GrahpQL</span>
+            </a> 
+            
+            <a class="button is-link is-outlined" href="http://docs.sequelizejs.com/" title="Hecho con">
+              <span class="icon">
+                <i class="fas fa-cube"></i>
+              </span>
+              <span>Sequelize</span>
+            </a>
+
+            <a class="button is-success is-outlined" href="https://nodejs.org/" title="Hecho con">
+              <span class="icon">
+                <i class="fab fa-node-js"></i>
+              </span>
+              <span>Node</span>
+            </a> 
+
+            <a class="button is-success is-outlined" href="https://vuejs.org/" title="Hecho con">
+              <span class="icon">
+                <i class="fab fa-vuejs"></i>
+              </span>
+              <span>Vue</span>
+            </a>
+            
+            <a class="button is-info is-outlined" href="https://www.facebook.com/groups/571508276552938/" title="Para">
+              <span class="icon">
+                <i class="fab fa-facebook"></i>
+              </span>
+              <span>Podemos Aprender</span>
+            </a> 
+            
+          </div>
+        </div>
+      </div>
+    </main>
+    
+  </body>
+</html>
