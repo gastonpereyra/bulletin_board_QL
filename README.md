@@ -15,4 +15,4 @@ Bulletin Board
 
 ## Hecho por Gastón Pereyra
 * Github: <https://github.com/gastonpereyra/bulletin_board_QL>
-* Docs del Bulletin Board: <https://github.com/gastonpereyra/bulletin_board_QL/tree/master/docs/blog>
+* Docs del Bulletin Board: <https://github.com/gastonpereyra/bulletin_board_QL/tree/master/docs/>
