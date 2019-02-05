@@ -65,7 +65,7 @@ type Tag {
 type Query {
   # User
   """ Obtener todos los Usuarios, Solo estando loggeado """
-  getUsers: [User]
+  getUsers(count: Int, offset: Int, order: String): [User]
   """ Obtener un Usuario, Solo estando loggeado, si no lo encuentra devuelve nulo """
   getUser(id: ID!): User
   """ Obtener un Usuario, Solo estando loggeado """
@@ -77,7 +77,7 @@ type Query {
   """ Chequea si existe el mail """
   isEmail(email: String): Boolean
   # Post
-  getPosts: [Post]
+  getPosts(count: Int, offset: Int): [Post]
   getPost(id: Int!): Post
   getPostByTitle(title: String!): [Post]
   # Tag
