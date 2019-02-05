@@ -1,17 +1,11 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const {getUsers} = require('./UsersResolvers');
 
 module.exports = {
   Query: {
     // Users
-    getUsers: (root,args,{auth,users}) => {
-      return users.findAll().then( usersList => {
-        return usersList.map( user => {
-          user.posts = user.getPosts();
-          return user;
-        })
-      });
-    },
+    getUsers,
     getUser: (root, {id}, {auth,users}) => {
       return users.findOne({where: {id: id}}).then( user => {
         user.posts = user.getPosts();
@@ -40,8 +34,12 @@ module.exports = {
                   .then( res => !res? false : true);
     },
     // Post
-    getPosts: (root, args, {auth, users, posts}) => {
-      return posts.findAll().then( results => results.map( post => {
+    getPosts: (root, {count=-1, offset=0}, {auth, users, posts}) => {
+      return posts.findAll({
+        limit: count,
+        offset: offset,
+        order: [ ['id', "DESC"] ]
+      }).then( results => results.map( post => {
         post.author= post.getUser();
         post.tags= post.getTags();
         post.comments= post.getComments();
