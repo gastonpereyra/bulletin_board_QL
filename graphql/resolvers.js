@@ -1,38 +1,15 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const {getUsers} = require('./UsersResolvers');
+const {getUsers, getUser, getUserByName, me, isUserName, isEmail} = require('./UsersResolvers');
 
 module.exports = {
   Query: {
     // Users
     getUsers,
-    getUser: (root, {id}, {auth,users}) => {
-      return users.findOne({where: {id: id}}).then( user => {
-        user.posts = user.getPosts();
-        return user;
-      });
-    },
-    getUserByName: (root, {userName}, {auth,users}) => {
-      return users.findOne({where: {userName: userName}}).then( user => {
-        user.posts = user.getPosts();
-        return user;
-      });
-    },
-    me: (root, args, {auth, users}) => {
-      if (!auth) throw new Error("Debe estar Loggeado");
-      return users.findOne({where: {id: auth}}).then( user => {
-        user.posts = user.getPosts();
-        return user;
-      });
-    },
-    isUserName: (root, {userName}, { users }) => {
-      return users.find({where: {userName: userName}})
-                  .then( res => !res? false : true);
-    },
-    isEmail: (root, {email}, { users }) => {
-      return users.find({where: {email: email}})
-                  .then( res => !res? false : true);
-    },
+    getUser,
+    getUserByName,
+    me,
+    isUserName,
     // Post
     getPosts: (root, {count=-1, offset=0}, {auth, users, posts}) => {
       return posts.findAll({
