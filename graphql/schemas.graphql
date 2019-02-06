@@ -9,6 +9,7 @@ type User {
   role: Int
   createdAt: String
   updatedAt: String
+  """ Post creados por el Usuario, no muestra el Author """
   posts: [Post]
 }
 """ Datos necesarios para Crear/Actualizar un Usuario """
@@ -22,6 +23,19 @@ input UserInput {
 enum Role {
   USER
   MOD
+}
+""" Orden Posible para Usuarios """
+enum UserOrder {
+  ID_ASC
+  ID_DESC
+  CREATED_ASC
+  CREATED_DESC
+  UPDATED_ASC
+  UPDATED_DESC
+  USERNAME_ASC
+  USERNAME_DESC
+  POST_ASC
+  POST_DESC
 }
 
 type AuthUser {
@@ -64,12 +78,10 @@ type Tag {
 
 type Query {
   # User
-  """ Obtener todos los Usuarios, Solo estando loggeado """
-  getUsers(count: Int, offset: Int, order: String): [User]
-  """ Obtener un Usuario, Solo estando loggeado, si no lo encuentra devuelve nulo """
+  """ Obtener todos los Usuarios """
+  getUsers(userName: String, count: Int, offset: Int, order: UserOrder): [User]
+  """ Obtener un Usuario """
   getUser(id: ID!): User
-  """ Obtener un Usuario, Solo estando loggeado """
-  getUserByName(userName: String!): User
   """ Datos del Usuario loggeado """
   me: User
   """ Chequea si esta habilitado el nombre de Usuario """
