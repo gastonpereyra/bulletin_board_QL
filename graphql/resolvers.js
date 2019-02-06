@@ -1,15 +1,17 @@
+// Modulos
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const {getUsers, getUser, getUserByName, me, isUserName, isEmail} = require('./UsersResolvers');
-
+// Resolvers
+const {getUsers, getUser, me, isEmail, isUserName} = require('./UsersResolvers');
+// Listos para Exportar
 module.exports = {
   Query: {
     // Users
     getUsers,
     getUser,
-    getUserByName,
     me,
     isUserName,
+    isEmail,
     // Post
     getPosts: (root, {count=-1, offset=0}, {auth, users, posts}) => {
       return posts.findAll({
