@@ -90,6 +90,30 @@ type Comment {
   updatedAt: String
 }
 
+""" Orden Posible para Etiquetas """
+enum CommentOrder {
+  """ ID ascendente """
+  ID_ASC
+  """ ID descendente """
+  ID_DESC
+  """ Fecha de Creación ascendente """
+  CREATED_ASC
+  """ Fecha de Creación descendente """
+  CREATED_DESC
+  """ Fecha de ultima Modificación ascendente """
+  UPDATED_ASC
+  """ Fecha de ultima Modificación descendente """
+  UPDATED_DESC
+  """ Nombre de la Etiqueta, orden alfabetico, ascendente """
+  AUTHOR_ASC
+  """ Nombre de la Etiqueta, orden alfabetico, descendente """
+  AUTHOR_DESC
+  """ Cantidad de Posts ascendente """
+  POSTID_ASC
+  """ Cantidad de Posts descendente """
+  POSTID_DESC
+}
+
 # ------ Tags
 
 """ Datos de las Etiquetas """
@@ -152,6 +176,7 @@ type Query {
   getTags(name: String, count: Int, offset: Int, order: TagOrder): [Tag]
   """ Obtiene Una Etiqueta por ID """
   getTag(id: Int!): Tag
+  getComments(userName: String, count: Int, offset: Int, order: CommentOrder): [Comment]
 }
 
 # ------ Mutations
@@ -173,7 +198,7 @@ type Mutation {
   updatePost(id: Int!, title: String, message: String, tagList: [String]): Post
   deletePost(id: Int!): String
   # Comment
-  postComment(postId: Int!, message: String!): Comment
+  createComment(postId: Int!, message: String!): Comment
   editComment(id: Int!, message: String!): Comment
   deleteComment(id: Int!): Comment
   # Like
