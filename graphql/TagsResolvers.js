@@ -53,14 +53,14 @@ module.exports = {
         offset: offset,
         // Incluyo los POSTS (join) lo necesito para buscar en la base de datos
         include: (order === 'POST_ASC' || order === 'POST_DESC' ) ? [posts] : [],
-        where: {userName: { $like: `%${name}%`}},
+        where: {name: { $like: `%${name}%`}},
         // Como los ordeno
         order: [
           sortResults(order)
         ]
       }).then( tagList => tagList)
     },
-  // ***** 
+  // ***** Encuentra un Tag
   getTag: (root, {id}, {auth, tags}) => {
       return tags.find({
         where: {id: id}
