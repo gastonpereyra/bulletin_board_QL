@@ -1,21 +1,25 @@
+# ------ Usuarios
+
 """ Datos del Usuario """
 type User {
   id: Int
+  """ Nombre de Usuario """
   userName: String
   email: String
-  # """ Encriptado """
-  # password: String
   """ 0 = Usuario, 1= Moderador, 2=Admin """
   role: Int
   createdAt: String
   updatedAt: String
-  """ Post creados por el Usuario, no muestra el Author """
+  """ Post creados por el Usuario """
   posts: [Post]
 }
+
 """ Datos necesarios para Crear/Actualizar un Usuario """
 input UserInput {
+  """ Nombre de Usuario """
   userName: String
   email: String
+  """ Password, 4 a 16 caracteres """
   password: String
 }
 
@@ -26,22 +30,37 @@ enum Role {
 }
 """ Orden Posible para Usuarios """
 enum UserOrder {
+  """ ID ascendente """
   ID_ASC
+  """ ID descendente """
   ID_DESC
+  """ Fecha de Creación ascendente """
   CREATED_ASC
+  """ Fecha de Creación descendente """
   CREATED_DESC
+  """ Fecha de ultima Modificación ascendente """
   UPDATED_ASC
+  """ Fecha de ultima Modificación descendente """
   UPDATED_DESC
+  """ Usuario, orden Alfabetico, ascendente """
   USERNAME_ASC
+  """ Usuario, orden Alfabetico, descendente """
   USERNAME_DESC
+  """ Cantidad de Posts ascendente """
   POST_ASC
+  """ Cantidad de Posts descendente """
   POST_DESC
 }
 
+""" Info de User Loggeado """
 type AuthUser {
+  """ token necesario para identificarse """
   token: String!
+  """ Nombre del usuario """
   userName: String
 }
+
+# ------ Posts
 
 """ Datos de un Post """
 type Post {
@@ -59,6 +78,8 @@ type Post {
   updatedAt: String
 }
 
+# ------ Comentarios
+
 """ Datos de un Comentario """
 type Comment {
   id: Int
@@ -69,13 +90,47 @@ type Comment {
   updatedAt: String
 }
 
+# ------ Tags
+
 """ Datos de las Etiquetas """
 type Tag {
   id: Int
+  """ nombre de la Etiqueta """
   name: String
+  createdAt: String
+  updatedAt: String
+  """ Posts en los que se encuentra """
   posts: [Post]
 }
 
+
+""" Orden Posible para Etiquetas """
+enum TagOrder {
+  """ ID ascendente """
+  ID_ASC
+  """ ID descendente """
+  ID_DESC
+  """ Fecha de Creación ascendente """
+  CREATED_ASC
+  """ Fecha de Creación descendente """
+  CREATED_DESC
+  """ Fecha de ultima Modificación ascendente """
+  UPDATED_ASC
+  """ Fecha de ultima Modificación descendente """
+  UPDATED_DESC
+  """ Nombre de la Etiqueta, orden alfabetico, ascendente """
+  NAME_ASC
+  """ Nombre de la Etiqueta, orden alfabetico, descendente """
+  NAME_DESC
+  """ Cantidad de Posts ascendente """
+  POST_ASC
+  """ Cantidad de Posts descendente """
+  POST_DESC
+}
+
+# ------ Queries
+
+""" Funciones para la Busqueda """
 type Query {
   # User
   """ Obtener todos los Usuarios """
@@ -93,11 +148,14 @@ type Query {
   getPost(id: Int!): Post
   getPostByTitle(title: String!): [Post]
   # Tag
-  getTags: [Tag]
+  getTags(name: String, count: Int, offset: Int, order: TagOrder): [Tag]
   getTag(id: Int!): Tag
   getTagByName(name: String!): [Tag]
 }
 
+# ------ Mutations
+
+""" Funciones para los cambios """
 type Mutation {
   """ Loggearse """
   logIn(userName: String!, password: String!): AuthUser
