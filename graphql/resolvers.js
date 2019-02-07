@@ -1,10 +1,12 @@
-// Modulos
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
 // Resolvers
-const {getUsers, getUser, me, isEmail, isUserName} = require('./UsersResolvers');
+const {posts, getUsers, getUser, me, isEmail, isUserName, logIn, signIn, updateUser, changeRole, deleteUser } = require('./UsersResolvers');
 // Listos para Exportar
 module.exports = {
+  User: {
+    // PAra Agregar Posts a Users
+    posts
+  },
+  // Queries
   Query: {
     // Users
     getUsers,
@@ -69,62 +71,13 @@ module.exports = {
       }))
     },
   },
+  // Modificaciones
   Mutation: {
-    logIn: (root, {userName, password}, { auth, users })=> {
-      if (auth) throw new Error ("Usted ya esta loggeado.");
-      return users.findOne({where: {userName: userName}}).then((user) => {
-            const result = bcrypt.compareSync(password, user.password);
-            if (!result) throw new Error();
-            const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
-            return ({
-              token,
-              "userName": user.userName
-            });
-        })
-        .catch(error =>  new Error("Usuario o Password Incorrectos.") );
-    },
-    signIn: (root, {input}, { auth, users })=> {
-      if (auth) throw new Error ("Usted ya esta loggeado.");
-
-      return users.create(input)
-        .then( newUser => {
-          const token = jwt.sign({ id: newUser.id }, process.env.JWT_SECRET);
-          return ({
-              token,
-              "userName": newUser.userName
-            });
-        })
-        .catch(err => new Error('No se pudo Crear Usuario, '+err));
-    },
-    updateUser: (root, {input}, { auth, users })=> {
-      if (!auth) throw new Error("Debe estar Loggeado");
-      return users.update(input,{where:{ id: auth }})
-                  .then(user => users.findOne({where:{id: auth}}))
-                  .catch(err => "Error: "+err);
-    },
-    changeRole: (root, {userId, role}, { auth, users })=> {
-      if (!auth) throw new Error("Debe estar Loggeado");
-      return users.findOne({where:{id: auth}})
-                  .then(user => {
-                    if (user.role <2) throw new Error("Debe ser Admin");
-                    const newRole = role === 'MOD' ? 1 : 0;
-                    return users.update({role: newRole},{where:{ id: userId }})
-                      .then( () => users.findOne({where:{id: userId}}))
-                  })
-                  .catch(err => err);
-    },
-    deleteUser: (root, {id}, { auth, users })=> {
-      if (!auth) throw new Error("Debe estar Loggeado");
-      return users.findOne({where:{id: auth}})
-                  .then(user => {
-                    if (user.role <2) throw new Error("Debe ser Admin")
-                    return users.findOne({where:{ id: id }})
-                            .then( u => users.destroy({where:{ id: id }})
-                                    .then( () => u)
-                            );
-                  })
-                  .catch(err =>  new Error("Error: "+err));
-    },
+    logIn,
+    signIn,
+    updateUser,
+    changeRole,
+    deleteUser,
     // Post
     createPost: (root,{title,message,tagList},{auth, users, posts, tags}) => {
       if (!auth) throw new Error("Debe estar Loggeado");
