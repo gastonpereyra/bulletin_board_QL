@@ -148,9 +148,10 @@ type Query {
   getPost(id: Int!): Post
   getPostByTitle(title: String!): [Post]
   # Tag
+  """ Obtiene todos las Etiquetas o por nombre, ordenadas """
   getTags(name: String, count: Int, offset: Int, order: TagOrder): [Tag]
+  """ Obtiene Una Etiqueta por ID """
   getTag(id: Int!): Tag
-  getTagByName(name: String!): [Tag]
 }
 
 # ------ Mutations
