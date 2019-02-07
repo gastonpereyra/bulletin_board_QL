@@ -41,10 +41,9 @@ const usersAtributes = (order= '') => {
 
 module.exports = {
   // ----- USER
-  // ***** Para Agregar los Posts del usuario **** 
-  posts: ({id},args, {users, posts}) => {
-    return posts.findAll({where:{userId: id}})
-  },
+  // ***** Para Agregar los Posts del usuario ****
+  // uso el Root (user) y la función de Sequelize que viene por asociación.
+  postsUser: (user) => user.getPosts(),
   // ----- Queries
   // ***** Para buscar todos los usuarios ****
   // Count y Offset para la paginación, offset desde donde y count cuantos, Default count: -1 (todos), offset= 0 (desde el principio)
