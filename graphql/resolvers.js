@@ -1,10 +1,35 @@
 // Resolvers
-const {posts, getUsers, getUser, me, isEmail, isUserName, logIn, signIn, updateUser, changeRole, deleteUser } = require('./UsersResolvers');
+const {postsUser, getUsers, getUser, me, isEmail, isUserName, logIn, signIn, updateUser, changeRole, deleteUser } = require('./UsersResolvers');
+const {postsTag, getTags, getTag} = require('./TagsResolvers');
+const {authorPost, tagsPost, commentsPost, likesPost, dislikesPost} = require('./PostsResolvers');
+const {postComment, authorComment } = require('./CommentsResolvers');
 // Listos para Exportar
 module.exports = {
+  Post: {
+    // Para Agregar User a Post
+    author: authorPost,
+    // Para Agregar Tags a Post
+    tags: tagsPost,
+    // Para Agregar Comentarios a Post
+    comments: commentsPost,
+    // Para Agregar Likes a Post
+    likes: likesPost,
+    // Para Agregar Dislikes a Post
+    dislikes: dislikesPost,
+  },
   User: {
-    // PAra Agregar Posts a Users
-    posts
+    // Para Agregar Posts a Users
+    posts: postsUser
+  },
+  Tag: {
+    // Para Agregar Posts a Tag
+    posts: postsTag
+  },
+  Comment: {
+    // Para Agregar Posts a Tag
+    post: postComment,
+    // Para Agregar User a Post
+    author: authorComment,
   },
   // Queries
   Query: {
@@ -21,55 +46,43 @@ module.exports = {
         offset: offset,
         order: [ ['id', "DESC"] ]
       }).then( results => results.map( post => {
+        /*
         post.author= post.getUser();
         post.tags= post.getTags();
         post.comments= post.getComments();
         post.likes = post.getLikes().then( like => like.reduce( (total,val) => total += val.like === 'l' ? 1 : 0, 0 ));
-        post.dislikes = post.getLikes().then( like => like.reduce( (total,val) => total += val.like === 'd' ? 1 : 0, 0));
+        post.dislikes = post.getLikes().then( like => like.reduce( (total,val) => total += val.like === 'd' ? 1 : 0, 0));*/
         return post;
         })
       )
     },
     getPost: (root, {id}, {auth, users, posts}) => {
       return posts.findOne({where: {id: id}}).then( post => {
+        /*
         post.author= post.getUser();
         post.tags= post.getTags();
         post.comments= post.getComments();
         post.likes = post.getLikes().then( like => like.reduce( (total,val) => total += val.like === 'l' ? 1 : 0, 0 ));
-        post.dislikes = post.getLikes().then( like => like.reduce( (total,val) => total += val.like === 'd' ? 1 : 0, 0));
+        post.dislikes = post.getLikes().then( like => like.reduce( (total,val) => total += val.like === 'd' ? 1 : 0, 0));*/
         return post;
         })
     },
     getPostByTitle: (root, {title}, {auth, users, posts}) => {
       return posts.findAll({where: {title: {$like: '%'+title+'%'}}}).then( results => results.map( post => {
+        /*
         post.author= post.getUser();
         post.tags= post.getTags();
         post.comments= post.getComments();
         post.likes = post.getLikes().then( like => like.reduce( (total,val) => total += val.like === 'l' ? 1 : 0, 0 ));
         post.dislikes = post.getLikes().then( like => like.reduce( (total,val) => total += val.like === 'd' ? 1 : 0, 0));
+        */
         return post;
         })
       )
     },
     // Tag
-    getTags: (root, args, {auth, tags}) => {
-      return tags.findAll().then( results => results.map( tag => {
-        tag.posts = tag.getPosts();
-        return tag
-      }))
-    },
-    getTag: (root, {id}, {auth, tags}) => {
-      return tags.find({where: {id: id}}).then( tag => {
-        tag.posts = tag.getPosts();
-        return tag
-      })
-    },
-    getTagByName: (root, {name}, {auth, tags}) => {
-      return tags.findAll({where: {name: {$like: '%'+name+'%'}}}).then( results => results.map( tag => {
-        tag.posts = tag.getPosts();
-        return tag
-      }))
-    },
+    getTags,
+    getTag,
   },
   // Modificaciones
   Mutation: {
