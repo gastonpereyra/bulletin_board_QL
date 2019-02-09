@@ -158,7 +158,7 @@ enum TagOrder {
 type Query {
   # User
   """ Obtener todos los Usuarios """
-  getUsers(userName: String, count: Int, offset: Int, order: UserOrder): [User]
+  getUsers(userName: String, role: Int, count: Int, offset: Int, order: UserOrder): [User]
   """ Obtener un Usuario """
   getUser(id: ID!): User
   """ Datos del Usuario loggeado """
@@ -183,13 +183,13 @@ type Query {
 
 """ Funciones para los cambios """
 type Mutation {
-  """ Loggearse """
+  """ Para Loggearse """
   logIn(userName: String!, password: String!): AuthUser
-  """ Registrarse """
+  """ Registrarse, Password de 4 caracteres minimo, Nombre de Usuario y Email unicos """
   signIn(input: UserInput!): AuthUser
   """ Actualizar Usuario, debe estar Loggeado """
-  updateUser(input: UserInput!): User
-  """ Admin Cambia Roles """
+  updateUser(newUser: UserInput!, oldUser: UserInput!): AuthUser
+  """ Admin Cambia Roles de Usuario """
   changeRole(userId: ID!, role: Role!): User
   """ Admin Borra Usuarios """
   deleteUser(id: ID!): User
