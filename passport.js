@@ -11,8 +11,8 @@ module.exports = (app, route, users) => {
   // Configuramos la estrategia
   const strategy = new Strategy(params, (payload, done) => { 
     // Si el Usuario Existe agregamos el ID en el request
-    return users.findOne({where: {id: payload.id}}).then(u => {
-      return done(null, u.id);
+    return users.findOne({where: {id: payload.id, userName: payload.userName}}).then(u => {
+      return done(null, { id: u.id, role: u.role});
     }).catch(err => done(err));
   });
   // Agregamos la Estrategia
@@ -21,7 +21,9 @@ module.exports = (app, route, users) => {
   // Nuestro unico Endpoint
   app.use(route, (req, res, next) => {
     passport.authenticate('jwt', { session: false }, (err, user, info) => {
-      if (user) { req.user = user }
+      if (user) { 
+        req.user = user;
+      }
       next()
     })(req, res, next)
   });
