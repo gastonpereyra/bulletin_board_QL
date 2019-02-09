@@ -2,6 +2,8 @@
 const Sequelize = require('sequelize');
 const errors = require('./errors');
 
+const Op = Sequelize.Op;
+
 // Para decidir que funcion usar para Ordenar
 const sortResults = (order,model) => {
     switch(order) {
@@ -60,7 +62,7 @@ const tagsAtributes = (order= '') => {
 
 module.exports = {
   
-  userOption : (userName, count, offset, order, posts) => ({
+  userOption : (userName, role, count, offset, order, posts) => ({
     // Opciones de la busqueda
     // Atributos que necesito
     attributes: usersAtributes(order),
@@ -68,7 +70,10 @@ module.exports = {
     offset: offset,
     // Incluyo los POSTS (join) lo necesito para buscar en la base de datos
     include: (order === 'POST_ASC' || order === 'POST_DESC' ) ? [posts] : [],
-    where: {userName: { $like: `%${userName}%`}},
+    where: {
+      userName: { $like: `%${userName}%`},
+      role: role>-1 ? role : { [Op.gt]: -1 }
+    },
     // Como los ordeno
     order: [
       sortResults(order)
