@@ -25,6 +25,7 @@ input UserInput {
 
 """ Roles posibles de Modificar """
 enum Role {
+  ADMIN
   USER
   MOD
 }
@@ -158,7 +159,7 @@ enum TagOrder {
 type Query {
   # User
   """ Obtener todos los Usuarios """
-  getUsers(userName: String, role: Int, count: Int, offset: Int, order: UserOrder): [User]
+  getUsers(userName: String, role: Role, count: Int, offset: Int, order: UserOrder): [User]
   """ Obtener un Usuario """
   getUser(id: ID!): User
   """ Datos del Usuario loggeado """
@@ -176,6 +177,8 @@ type Query {
   getTags(name: String, count: Int, offset: Int, order: TagOrder): [Tag]
   """ Obtiene Una Etiqueta por ID """
   getTag(id: Int!): Tag
+  # Comments
+  """ Busca los comentarios de todos los Posts """
   getComments(userName: String, count: Int, offset: Int, order: CommentOrder): [Comment]
 }
 
@@ -198,10 +201,16 @@ type Mutation {
   updatePost(id: Int!, title: String, message: String, tagList: [String]): Post
   deletePost(id: Int!): String
   # Comment
+  """ Crear un Comentario en un post. Debe estar loggeado """
   createComment(postId: Int!, message: String!): Comment
+  """ Edita un Comentario. Debe estar loggeado, Autor o MOD o ADMIN """
   editComment(id: Int!, message: String!): Comment
+  """ Borrar un Comentario. Debe estar loggeado, Autor o MOD o ADMIN """
   deleteComment(id: Int!): Comment
   # Like
   giveLike(postId: Int!): Boolean
   giveDislike(postId: Int!): Boolean
+  # Tag
+  """ Borra un Tag, Solo Admin, Si no esta asociado a ningun Post """
+  deleteTag(id: Int!): Tag
 }
