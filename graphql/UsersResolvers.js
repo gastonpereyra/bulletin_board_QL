@@ -16,7 +16,8 @@ module.exports = {
   // de Context traigo los modelos de Usuaruis y Posts
   // Si no encuentra devuelve NULL
   getUsers: (root,{count=-1, offset=0, order='ID_ASC', userName='', role=-1}, {users, posts}) => {
-      return users.findAll(userOption(userName, role, count, offset, order, posts))
+      const roleToSearch = role === 'ADMIN' ? 2 : role === 'MOD' ? 1 : role === 'USER' ? 0 : role;
+      return users.findAll(userOption(userName, roleToSearch, count, offset, order, posts))
         .then( usersList => usersList)
         // Si surge algun problema
         .catch(err => new Error(errors.SEARCH_00));
@@ -135,7 +136,8 @@ module.exports = {
     // Debe ser Admin
     if (auth.role <2) throw new Error(errors.LOG_05);
     // Convierto a Int el rol (no se puede modificar a ADMIN)
-    const newRole = role === 'MOD' ? 1 : 0;
+    const newRole = role === 'ADMIN' ? 2 : role === 'MOD' ? 1 : 0;
+    if (newRole === 2) throw new Error(errors.UPDATE_01);
     // Busco el user ID sino Error
     return users.findOne({ where: { id: userId } })
       .then(user => {
@@ -160,6 +162,6 @@ module.exports = {
         // devuelvo el borrado
         return user;
       // Sino tira error
-      }).catch(err => new Error(errors.LOG_04));
+      }).catch(err => new Error(errors.DELETE_00));
     },
 }
