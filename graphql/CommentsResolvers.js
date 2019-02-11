@@ -35,7 +35,7 @@ module.exports = {
     return comments.findOne({where: {id: id} })
       .then( comment => {
         // Para actualizar debe ser: MOD, ADMIN, o el Autor
-        if (auth.role > 1 || comment.userId === auth.id) {
+        if (auth.role > 0 || comment.userId === auth.id) {
           return comment.update({message})
             .then( updatedComment => updatedComment);
         }  
@@ -52,7 +52,7 @@ module.exports = {
     return comments.findOne({where: {id: id} })
       .then( comment => {
         // Para Borrar debe ser: MOD, ADMIN, o el Autor
-        if (auth.role > 1 || comment.userId === auth.id) {
+        if (auth.role > 0 || comment.userId === auth.id) {
           comment.destroy();
           return comment;
         }
