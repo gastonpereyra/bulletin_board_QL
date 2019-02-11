@@ -14,6 +14,7 @@ const Tag = tagModel(db);
 const Like = likeModel(db);
 // Asociaciones
 User.hasMany(Post);
+User.hasMany(Comment);
 Post.belongsTo(User);
 Post.hasMany(Comment);
 Post.hasMany(Like);
