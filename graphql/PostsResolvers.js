@@ -110,7 +110,7 @@ module.exports = {
         return likes.create({postId, like: true, userId: auth.id}).then( () => true)
       });
     },
-    giveDislike: (root,{postId},{auth, likes}) => {
+   giveDislike: (root,{postId},{auth, likes}) => {
       // Si no esta loggeado no se puede hacer esta acción
     if (!auth) throw new Error(errors.LOG_01);
       return likes.find({where:{ postId: postId, userId: auth.id}})
@@ -118,5 +118,13 @@ module.exports = {
         if (isDislike) return isDislike.destroy().then(() => false);;
         return likes.create({postId, like: false, userId: auth.id}).then( () => true)
       });
-    }
+    },
+  viewPost: (root, {id}, {auth, posts}) => {
+      return posts.findOne({where: {id: id}})
+        .then( post => {
+          if (!post) throw new Error(errors.SEARCH_02);
+          return post.update({views: post.views+1}).then( p => p);
+        })
+        .catch(err => new Error(errors.SEARCH_00+" "+err));
+  },
 }
