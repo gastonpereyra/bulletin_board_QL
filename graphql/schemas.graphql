@@ -8,19 +8,26 @@ type User {
   email: String
   """ 0 = Usuario, 1= Moderador, 2=Admin """
   role: Int
+  """ URL a la imagen de avatar """
+  image: String
   createdAt: String
   updatedAt: String
+  lastLoginAt: String
   """ Post creados por el Usuario """
   posts: [Post]
+  comments: [Comment]
 }
 
 """ Datos necesarios para Crear/Actualizar un Usuario """
 input UserInput {
   """ Nombre de Usuario """
-  userName: String
-  email: String
+  userName: String!
+  """ Email del Usuario """
+  email: String!
   """ Password, 4 a 16 caracteres """
-  password: String
+  password: String!
+  """ URL de la imagen del Usuario """
+  image: String
 }
 
 """ Roles posibles de Modificar """
@@ -69,7 +76,6 @@ type Post {
   title: String
   message: String
   views: Int
-  visible: Boolean
   likes: Int
   dislikes: Int
   author: User
@@ -199,7 +205,7 @@ type Mutation {
   # Post
   createPost(title: String!, message: String!, tagList: [String]): Post
   updatePost(id: Int!, title: String, message: String, tagList: [String]): Post
-  deletePost(id: Int!): String
+  deletePost(id: Int!): Post
   # Comment
   """ Crear un Comentario en un post. Debe estar loggeado """
   createComment(postId: Int!, message: String!): Comment
