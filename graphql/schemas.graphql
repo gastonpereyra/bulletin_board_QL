@@ -206,6 +206,7 @@ type Mutation {
   createPost(title: String!, message: String!, tagList: [String]): Post
   updatePost(id: Int!, title: String, message: String, tagList: [String]): Post
   deletePost(id: Int!): Post
+  viewPost(id: Int!): Post
   # Comment
   """ Crear un Comentario en un post. Debe estar loggeado """
   createComment(postId: Int!, message: String!): Comment
