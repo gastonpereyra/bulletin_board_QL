@@ -6,9 +6,11 @@ const {userOption} = require('./options');
 
 module.exports = {
   // ----- USER
-  // ***** Para Agregar los Posts del usuario **** 
   // uso el Root (user) y la función de Sequelize que viene por asociación.
+  // ***** Para Agregar los Posts del usuario
   postsUser: (user) => user.getPosts(),
+  // ***** Para Agregar los Comentarios del usuario
+  commentsUser: (user) => user.getComments(),
   // ----- Queries
   // ***** Para buscar todos los usuarios
   // Count y Offset para la paginación, offset desde donde y count cuantos, Default count: -1 (todos), offset= 0 (desde el principio)
@@ -66,13 +68,17 @@ module.exports = {
         const isPass = bcrypt.compareSync(password, user.password);
         // Si falla hay error, lo lanzó. Fin
         if (!isPass) throw new Error();
-        // Sino, creo el Token
-        const token = jwt.sign({ id: user.id, userName: user.userName }, process.env.JWT_SECRET);
-        // Retorno el objeto.
-        return ({
-          token,
-          userName
+        // Sino actualizo el ultimo logeo
+        return user.update({lastLoginAt: Date.now() }).then ( () => {
+          // Creo el Token
+          const token = jwt.sign({ id: user.id, userName: user.userName }, process.env.JWT_SECRET, { expiresIn: '1h' });
+          // Retorno el objeto.
+          return ({
+            token,
+            userName
+          });
         });
+        
       })
       // Si no lo encuentra el Username o el password esta mal
       .catch(error =>  new Error(errors.LOG_03) );
@@ -86,10 +92,13 @@ module.exports = {
     // Contraseña debe ser mayor a 4 caracteres
     if (input.password.length<4) throw new Error(errors.SIGN_02);
     // Sino busco crear el usuario
-    return users.create(input)
+    // Primero agrego el ultimo loggeo
+    const user= {...input, lastLoginAt: Date.now() };
+    // Creo
+    return users.create(user)
       .then( newUser => {
       // Si lo crea correctamente emito el token
-        const token = jwt.sign({ id: newUser.id, userName: newUser.userName }, process.env.JWT_SECRET);
+        const token = jwt.sign({ id: newUser.id, userName: newUser.userName }, process.env.JWT_SECRET, { expiresIn: '1h' });
         return ({
             token,
             "userName": newUser.userName
@@ -113,21 +122,23 @@ module.exports = {
         // Chequea que la contraseña este correcta
         const isPass = bcrypt.compareSync(oldUser.password, user.password );
         if (!isPass)
-          throw new Error(errors.LOG_04)
+          throw new Error()
         // Si pasa el chequeo, busco actualizar
-        return users.update(newUser, { where: { id: auth.id, userName: oldUser.userName, email: oldUser.email }})
+        return users.update({...newUser,lastLoginAt: Date.now()}, { where: { id: auth.id, userName: oldUser.userName, email: oldUser.email }})
           .then( updatedUser => {
+          console.log("H");
           // Si no encuentra (por alguna razon) tira error
-          if (updatedUser[0] === 0) throw new Error(errors.LOG_04);
+          if (updatedUser[0] === 0) throw new Error();
           // Si actualiza, Crea el nuevo Token
-          const token = jwt.sign({ id: auth.id, userName: newUser.userName }, process.env.JWT_SECRET);
+          const token = jwt.sign({ id: auth.id, userName: newUser.userName }, process.env.JWT_SECRET, { expiresIn: '1h' });
+          console.log("H");
           // Retorno el objeto.
             return ({
               token,
               userName: newUser.userName
-            }).catch(err => new Error(errors.SIGN_01)); // Si el userName o email existen tira error
+            })
         });
-      }).catch(err => new Error(errors.LOG_04)); // si al buscar el user no lo encuentra
+      }).catch(err => new Error(errors.LOG_04+" "+err)); // si al buscar el user no lo encuentra
     },
   // **** Cambia de Rol de un User ****
   changeRole: (root, {userId, role}, { auth, users })=> {
