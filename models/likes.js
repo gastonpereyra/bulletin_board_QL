@@ -2,7 +2,7 @@
 const Sequelize = require('sequelize');
 // Modelo para Los Likes
 const model = {
-  like: { type: Sequelize.STRING, allowNull: false, validate:{is: /[ld]/i}, len:[1] },
+  like: { type: Sequelize.BOOLEAN, allowNull: false, defaultValue: true },
 };
 
 // Exportar
