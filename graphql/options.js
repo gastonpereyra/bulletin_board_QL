@@ -21,6 +21,12 @@ const sortResults = (order,model) => {
       case 'POST_DESC': return [Sequelize.literal('PostCount'), 'DESC'];
       case 'TITLE_ASC': return ['title','ASC'];
       case 'TITLE_DESC': return ['title','DESC'];
+      case 'LIKES_ASC' : return [Sequelize.literal('LikeCount'), 'ASC'];
+      case 'LIKES_DESC' : return [Sequelize.literal('LikeCount'), 'DESC'];
+      case 'DISLIKES_ASC' : return [Sequelize.literal('DislikeCount'), 'ASC'];
+      case 'DISLIKES_DESC' : return [Sequelize.literal('DislikeCount'), 'DESC'];
+      case 'TAG_ASC' : return [Sequelize.literal('TagCount'), 'ASC'];
+      case 'TAG_DESC' : return [Sequelize.literal('TagCount'), 'DESC'];
       case 'AUTHOR_ASC': return [model, 'userName', 'ASC'];
       case 'AUTHOR_DESC': return [model, 'userName', 'DESC'];
       case 'POSTID_ASC': return [model, 'id', 'ASC'];
@@ -32,12 +38,14 @@ const sortResults = (order,model) => {
 const usersAtributes = (order= '') => {
     // en este caso no quiero devolver el password
     const attr = [
-    'id',
-    'userName',
-    'email',
-    'role',
-    'createdAt',
-    'updatedAt',
+      'id',
+      'userName',
+      'email',
+      'role',
+      'image',
+      'createdAt',
+      'updatedAt',
+      'lastLoginAt',
     ]
     // Si busco por Post Agrego columna donde los cuenta
     if (order === 'POST_ASC' || order === 'POST_DESC' ) 
@@ -56,6 +64,27 @@ const tagsAtributes = (order= '') => {
     // Si busco por Post Agrego columna donde los cuenta
     if (order === 'POST_ASC' || order === 'POST_DESC' ) 
       attr.push([Sequelize.literal('(SELECT COUNT(*) FROM posts JOIN tagging on tagging.postId = posts.id WHERE tagging.tagId = tags.id)'), 'PostCount']);
+    // Devyuelvo los atributos
+    return attr;
+  };
+
+const postsAtributes = (order= '') => {
+    // en este caso no quiero devolver el password
+    const attr = [
+    'id',
+    'title',
+    'message',
+    'views',
+    'createdAt',
+    'updatedAt',
+    ]
+    // Si busco por Post Agrego columna donde los cuenta
+    if (order === 'TAG_ASC' || order === 'TAG_DESC' )
+      attr.push([Sequelize.literal('(SELECT COUNT(*) FROM tags JOIN tagging on tagging.tagId = tags.id WHERE tagging.postId = posts.id)'), 'TagCount']);
+    if (order === 'LIKES_ASC' || order === 'LIKES_DESC' )
+      attr.push([Sequelize.literal('(SELECT COUNT(*) FROM likes WHERE likes.postsId = post.id AND likes.like = "l")'), 'LikeCount']);
+    if (order === 'DISLIKES_ASC' || order === 'DISLIKES_DESC' )
+      attr.push([Sequelize.literal('(SELECT COUNT(*) FROM likes WHERE likes.postsId = post.id AND likes.like = "d")'), 'DislikeCount']);
     // Devyuelvo los atributos
     return attr;
   };
@@ -98,14 +127,28 @@ module.exports = {
     limit: count,
     offset: offset,
     // Incluyo los POSTS y USER (join) lo necesito para buscar en la base de datos
-    include: [posts, {
-      model: users,
-      where: { userName }
-    }],
+    include: [posts, users],
     // Como los ordeno
     order: [
       sortResults(order, (order === 'POSTID_ASC' || order === 'POSTID_DESC' ) ? posts : users )
     ]
   }),
+  postOption : (title, minLikes, minDislikes, count, offset, order, users, likes, tags) => ({
+    // Opciones de la busqueda
+    // Atributos que necesito
+    attributes: postsAtributes(order),
+    limit: count,
+    offset: offset,
+    // Incluyo los POSTS (join) lo necesito para buscar en la base de datos
+    include: (order.include('AUTHOR')) ? [users] : [],
+    where: {
+      title: { $like: `%${title}%`},
+      // role: role>-1 ? role : { [Op.gt]: -1 }
+    },
+    // Como los ordeno
+    order: [
+      sortResults(order)
+    ]
+  })
 
 }
