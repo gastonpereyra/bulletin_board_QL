@@ -5,7 +5,6 @@ const model = {
   title: { type: Sequelize.TEXT, allowNull: false, validate: { len:[1,50]} },
   message: { type: Sequelize.TEXT, allowNull: false, validate: { len:[1,1500]} },
   views: { type: Sequelize.INTEGER, allowNull: false, defaultValue: 0 },
-  visible: { type: Sequelize.BOOLEAN, allowNull: false, defaultValue: true }
 };
 // Exportar
 module.exports = (db) => {
