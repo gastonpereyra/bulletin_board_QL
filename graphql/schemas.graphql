@@ -85,6 +85,35 @@ type Post {
   updatedAt: String
 }
 
+enum PostOrder {
+  """ ID ascendente """
+  ID_ASC
+  """ ID descendente """
+  ID_DESC
+  """ Fecha de Creación ascendente """
+  CREATED_ASC
+  """ Fecha de Creación descendente """
+  CREATED_DESC
+  """ Fecha de ultima Modificación ascendente """
+  UPDATED_ASC
+  """ Fecha de ultima Modificación descendente """
+  UPDATED_DESC
+  """ Nombre de la Etiqueta, orden alfabetico, ascendente """
+  AUTHOR_ASC
+  """ Nombre de la Etiqueta, orden alfabetico, descendente """
+  AUTHOR_DESC
+  """ Cantidad de Posts ascendente """
+  TAG_ASC
+  """ Cantidad de Posts descendente """
+  TAG_DESC
+  LIKES_ASC
+  LIKES_DESC
+  DISLIKES_ASC
+  DISLIKES_DESC
+  COMMENT_ASC
+  COMMENT_DESC
+}
+
 # ------ Comentarios
 
 """ Datos de un Comentario """
@@ -175,9 +204,8 @@ type Query {
   """ Chequea si existe el mail """
   isEmail(email: String): Boolean
   # Post
-  getPosts(count: Int, offset: Int): [Post]
+  getPosts(title: String, count: Int, offset: Int, order: PostOrder): [Post]
   getPost(id: Int!): Post
-  getPostByTitle(title: String!): [Post]
   # Tag
   """ Obtiene todos las Etiquetas o por nombre, ordenadas """
   getTags(name: String, count: Int, offset: Int, order: TagOrder): [Tag]
