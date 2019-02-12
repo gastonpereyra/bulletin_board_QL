@@ -1,6 +1,7 @@
 // Modulos
 const Sequelize = require('sequelize');
 const errors = require('./errors');
+const {postOption} = require('./options');
 
 const addTagging = (tagList, post, tags) => {
   tagList.forEach( name => {
@@ -24,26 +25,14 @@ module.exports = {
   likesPost: (post) => post.getLikes().then( likeList => likeList.reduce( (total, actual) => total+ actual ? 1 : 0, 0)),
   dislikesPost: (post) => post.getLikes().then( likeList => likeList.reduce( (total, actual) => total+ !actual ? 1 : 0, 0)),
   // ----- QUERY
-  getPosts: (root, {title='', minLikes=0, minDislikes=0, count=-1, offset=0, order='ID_ASC' }, {auth, users, posts, likes}) => {
-      return posts.findAll({
-        limit: count,
-        offset: offset,
-        // order: [ [likes, "likeCount"] ]
-      }).then( results => results.map( post => {
-        return post;
-        })
-      )
+  getPosts: (root, {title='', count=-1, offset=0, order='ID_ASC' }, {auth, users, posts}) => {
+      return posts.findAll(postOption(title, count, offset, order, users))
+        .then( post => post)
     },
     getPost: (root, {id}, {auth, users, posts}) => {
       return posts.findOne({where: {id: id}})
         .then( post => post)
         .catch(err => new Error(errors.SEARCH_00));
-    },
-    getPostByTitle: (root, {title}, {auth, users, posts}) => {
-      return posts.findAll({where: {title: {$like: '%'+title+'%'}}}).then( results => results.map( post => {
-        return post;
-        })
-      )
     },
   // ----- MUTATIONS
   createPost: (root,{title,message,tagList=[]},{auth, posts, tags}) => {
@@ -110,15 +99,15 @@ module.exports = {
         return likes.create({postId, like: true, userId: auth.id}).then( () => true)
       });
     },
-   giveDislike: (root,{postId},{auth, likes}) => {
+  giveDislike: (root,{postId},{auth, likes}) => {
       // Si no esta loggeado no se puede hacer esta acción
     if (!auth) throw new Error(errors.LOG_01);
-      return likes.find({where:{ postId: postId, userId: auth.id}})
-        .then(isDislike => {
-        if (isDislike) return isDislike.destroy().then(() => false);;
-        return likes.create({postId, like: false, userId: auth.id}).then( () => true)
-      });
-    },
+    return likes.find({where:{ postId: postId, userId: auth.id}})
+      .then(isDislike => {
+      if (isDislike) return isDislike.destroy().then(() => false);;
+      return likes.create({postId, like: false, userId: auth.id}).then( () => true)
+    });
+  },
   viewPost: (root, {id}, {auth, posts}) => {
       return posts.findOne({where: {id: id}})
         .then( post => {
