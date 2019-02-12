@@ -3,7 +3,7 @@ const {postsUser, getUsers, getUser, me, isEmail, isUserName,
        logIn, signIn, updateUser, changeRole, deleteUser } = require('./UsersResolvers');
 const {postsTag, getTags, getTag, deleteTag} = require('./TagsResolvers');
 const {authorPost, tagsPost, commentsPost, likesPost, dislikesPost, 
-       getPosts, getPost, getPostByTitle, viewPost, 
+       getPosts, getPost, viewPost, 
        createPost, updatePost, deletePost,giveLike, giveDislike} = require('./PostsResolvers');
 const {postComment, getComments, authorComment, createComment, editComment ,deleteComment } = require('./CommentsResolvers');
 
@@ -38,7 +38,6 @@ module.exports = {
     // Posts
     getPosts,
     getPost,
-    getPostByTitle,
     // Tags
     getTags,
     getTag,
