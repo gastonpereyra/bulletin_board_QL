@@ -44,6 +44,7 @@ module.exports = {
         .catch(err => new Error(errors.SEARCH_00));
     },
   // ----- MUTATIONS
+  // ***** Crear Posts
   createPost: (root,{title,message,tagList=[]},{auth, posts, tags}) => {
     // Si no esta loggeado no se puede hacer esta acción
     if (!auth) throw new Error(errors.LOG_01);
@@ -54,34 +55,39 @@ module.exports = {
         return addTagging(tagList, post, tags).then( postConTags => postConTags);
     }).catch(err => new Error(errors.CREATE_00));
   },
+  // ***** Actualizar los Posts (lo que se quiera mantener debe ser pasado como como nuevo
   updatePost: (root, {id,title,message,tagList}, { auth, posts,tags })=> {
     // Si no esta loggeado no se puede hacer esta acción
     if (!auth) throw new Error(errors.LOG_01);
+    // Busco si existe el post
     return posts.findOne({where: {id: id}}).then( post => {
+      // Si es el autor o esta autorizado
       if (auth.role > 0 || post.userId === auth.id) { 
-        
+        // Actualiza
         return post.update({title, message})
-          .then( p => {
-            return post.getTags()
-              .then( oldTags => {
-                oldTags.forEach( oldTag => {
-                  if (!tagList.includes(oldTag.name))
+          .then( p => post.getTags() // obtengo los Tags viejos
+            .then( oldTags => {
+                // Si no estan entre los nuevos, los borro y me quedo con los que estan en la Lista de Tags
+                return oldTags.filter( oldTag => {
+                  if (!tagList.includes(oldTag.name)) {
                     post.removeTags(oldTag);
+                    return false;
+                  } else return true;
                 });
-                return oldTags;
               }).then( oldTags => {
-                return tagList.map( newTag => {
-                  if (!p.hasTags({ name: newTag }))
-                    return newTag;
-                });
-                
-              }).then( newTags => addTagging(newTags, post, tags).then( newPost => newPost));
-          })
-          .catch(err => new Error(errors.UPDATE_00));
+                // Filtro entre la lista de Tags los que ya estan agregados, y paso los nuevos
+                return tagList.filter( name => !oldTags.includes({ name })
+                );
+              // Agrego los nuevos tags y devuelvo el post actualizado
+              }).then( newTags => addTagging(newTags, post, tags).then( newPost => newPost))
+          // Si hay problemas con la actualización
+          ).catch(err => new Error(errors.UPDATE_00));
       }
+      // Si no esta autorizado error
       throw new Error(errors.UPDATE_01);
       })
   },
+  // ***** Borrar un Post (borra los comentarios al post)
   deletePost: (root, {id}, { auth, comments, posts })=> {
       // Si no esta loggeado no se puede hacer esta acción
     if (!auth) throw new Error(errors.LOG_01);
@@ -102,7 +108,7 @@ module.exports = {
         throw new Error(errors.UPDATE_01);
     });  
   },
-  
+  // ***** Agregar 1 Like al post
   giveLike: (root,{postId},{auth, likes}) => {
       // Si no esta loggeado no se puede hacer esta acción
     if (!auth) throw new Error(errors.LOG_01);
@@ -112,6 +118,7 @@ module.exports = {
         return likes.create({postId, like: true, userId: auth.id}).then( () => true)
       });
     },
+  // ***** Agregar 1 dislike al post
   giveDislike: (root,{postId},{auth, likes}) => {
       // Si no esta loggeado no se puede hacer esta acción
     if (!auth) throw new Error(errors.LOG_01);
@@ -121,6 +128,7 @@ module.exports = {
       return likes.create({postId, like: false, userId: auth.id}).then( () => true)
     });
   },
+  // ***** Visita un Post
   viewPost: (root, {id}, {auth, posts}) => {
       return posts.findOne({where: {id: id}})
         .then( post => {
