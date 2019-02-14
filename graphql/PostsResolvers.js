@@ -3,13 +3,22 @@ const Sequelize = require('sequelize');
 const errors = require('./errors');
 const {postOption} = require('./options');
 
-const addTagging = (tagList, post, tags) => {
-  tagList.forEach( name => {
-    tags.findOne({where: {name}}).then( 
-      tag => tag ? post.addTags(tag.id) : 
-      tags.create({ name }).then( ntag => post.addTags(ntag.id))
+// Función para agregar Tags, siempre devuelvo el Post con los Tags agregados, si los hay
+const addTagging = async (tagList, post, tags) => {
+  // Si no hay tags para agregar devuelvo el post
+  if (tagList.length === 0) return post;
+  
+  const esperarAgregarTags = await tagList.map( name => {
+    // Busco si existe el Tag
+    return tags.findOne({where: {name}}).then( 
+      // Si existe agrego al Post
+      tag => tag ? post.addTags(tag.id).then(() => post) : 
+      // Si no existe lo creo y añado al post
+      post.createTag({ name }).then(() => post)
     );
   });
+  // devuelvo el Post cuando termine de agregar los Tags
+  return esperarAgregarTags[esperarAgregarTags.length-1];
 };
 
 module.exports = {
@@ -18,7 +27,7 @@ module.exports = {
   // uso el Root (user) y la función de Sequelize que viene por asociación.
   authorPost: (post) => post.getUser(),
   // ***** Agregar los Tag a Post
-  tagsPost: (post) => post.getTags(),
+  tagsPost: (post,args,{posts}) => post.getTags(),
   // ***** Agregar los Comentarios a Post
   commentsPost: (post) => post.getComments(),
   // ***** Agregar los Like/Dislikes a Post
@@ -38,10 +47,11 @@ module.exports = {
   createPost: (root,{title,message,tagList=[]},{auth, posts, tags}) => {
     // Si no esta loggeado no se puede hacer esta acción
     if (!auth) throw new Error(errors.LOG_01);
+    // Creo el post
     return posts.create({title, message, userId: auth.id})
       .then( post => {
-        addTagging(tagList, post, tags);
-        return post
+        // Si todo sale bien agrego los Tags y finalizado devuelvo el post creado
+        return addTagging(tagList, post, tags).then( postConTags => postConTags);
     }).catch(err => new Error(errors.CREATE_00));
   },
   updatePost: (root, {id,title,message,tagList}, { auth, posts,tags })=> {
@@ -50,21 +60,24 @@ module.exports = {
     return posts.findOne({where: {id: id}}).then( post => {
       if (auth.role > 0 || post.userId === auth.id) { 
         
-        post.getTags()
-          .then( oldTags => {
-            oldTags.forEach( oldTag => {
-              if (!tagList.includes(oldTag.name))
-                post.removeTags(oldTag);
-            });
-            return oldTags;
-          }).then( oldTags => {
-            const newTags = tagList.map( newTag => {
-              if (!oldTags.includes(newTag.name))
-                return newTag;
-            });
-            addTagging(newTags, post, tags);
-        });
-        return post.update({title, message}).catch(err => new Error(errors.UPDATE_00));
+        return post.update({title, message})
+          .then( p => {
+            return post.getTags()
+              .then( oldTags => {
+                oldTags.forEach( oldTag => {
+                  if (!tagList.includes(oldTag.name))
+                    post.removeTags(oldTag);
+                });
+                return oldTags;
+              }).then( oldTags => {
+                return tagList.map( newTag => {
+                  if (!p.hasTags({ name: newTag }))
+                    return newTag;
+                });
+                
+              }).then( newTags => addTagging(newTags, post, tags).then( newPost => newPost));
+          })
+          .catch(err => new Error(errors.UPDATE_00));
       }
       throw new Error(errors.UPDATE_01);
       })
