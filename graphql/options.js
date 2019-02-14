@@ -79,7 +79,7 @@ const postsAtributes = (order= '') => {
     'views',
     'createdAt',
     'updatedAt',
-    //'userId',
+    'userId',
     ]
     // Si busco por Post Agrego columna donde los cuenta
     if (order === 'TAG_ASC' || order === 'TAG_DESC' )
