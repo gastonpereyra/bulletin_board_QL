@@ -1,6 +1,7 @@
 // Modulos
 const Sequelize = require('sequelize');
 const errors = require('./errors');
+// Opciones para las Busquedas
 const {commentOption} = require('./options');
 
 module.exports = {
@@ -11,8 +12,8 @@ module.exports = {
   // ***** Para Agregar el Post al Commentario
   postComment: (comment) => comment.getPost(),
   // ----- QUERIES
-  getComments: (root,{userName='', count=-1, offset=0, order='ID_ASC'}, {comments, users, posts}) => {
-      return comments.findAll(commentOption(userName, count,offset,order,posts,users))
+  getComments: (root,{count=-1, offset=0, order='ID_ASC'}, {comments, users, posts}) => {
+      return comments.findAll(commentOption(count,offset,order,posts,users))
         .then( commentsList => commentsList)
         .catch(err => new Error(errors.SEARCH_00)); 
     },
