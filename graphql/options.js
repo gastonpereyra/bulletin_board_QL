@@ -27,8 +27,6 @@ const sortResults = (order,model) => {
       case 'LIKES_DESC' : return [Sequelize.literal('LikeCount'), 'DESC'];
       case 'DISLIKES_ASC' : return [Sequelize.literal('DislikeCount'), 'ASC'];
       case 'DISLIKES_DESC' : return [Sequelize.literal('DislikeCount'), 'DESC'];
-      case 'TAG_ASC' : return [Sequelize.literal('TagCount'), 'ASC'];
-      case 'TAG_DESC' : return [Sequelize.literal('TagCount'), 'DESC'];
       case 'AUTHOR_ASC': return [model, 'userName', 'ASC'];
       case 'AUTHOR_DESC': return [model, 'userName', 'DESC'];
       case 'POSTID_ASC': return [model, 'id', 'ASC'];
@@ -52,6 +50,8 @@ const usersAtributes = (order= '') => {
     // Si busco por Post Agrego columna donde los cuenta
     if (order === 'POST_ASC' || order === 'POST_DESC' ) 
       attr.push([Sequelize.literal('(SELECT COUNT(*) FROM posts WHERE posts.userId = users.id)'), 'PostCount']);
+    if (order === 'COMMENT_ASC' || order === 'COMMENT_DESC' ) 
+      attr.push([Sequelize.literal('(SELECT COUNT(*) FROM comments WHERE comments.userId = users.id)'), 'CommentCount']);
     // Devyuelvo los atributos
     return attr;
   };
@@ -61,7 +61,6 @@ const tagsAtributes = (order= '') => {
       'id',
       'name',
       'createdAt',
-      'updatedAt',
     ]
     // Si busco por Post Agrego columna donde los cuenta
     if (order === 'POST_ASC' || order === 'POST_DESC' ) 
@@ -82,8 +81,6 @@ const postsAtributes = (order= '') => {
     'userId',
     ]
     // Si busco por Post Agrego columna donde los cuenta
-    if (order === 'TAG_ASC' || order === 'TAG_DESC' )
-      attr.push([Sequelize.literal('(SELECT COUNT(*) FROM tags JOIN tagging on tagging.tagId = tags.id WHERE tagging.postId = posts.id)'), 'TagCount']);
     if (order === 'LIKES_ASC' || order === 'LIKES_DESC' )
       attr.push([Sequelize.literal('(SELECT COUNT(*) FROM likes WHERE likes.postId = posts.id AND likes.like = true)'), 'LikeCount']);
     if (order === 'DISLIKES_ASC' || order === 'DISLIKES_DESC' )
@@ -96,14 +93,12 @@ const postsAtributes = (order= '') => {
 
 module.exports = {
   
-  userOption : (userName, role, count, offset, order, posts) => ({
+  userOption : (userName, role, count, offset, order) => ({
     // Opciones de la busqueda
     // Atributos que necesito
     attributes: usersAtributes(order),
     limit: count,
     offset: offset,
-    // Incluyo los POSTS (join) lo necesito para buscar en la base de datos
-    include: (order === 'POST_ASC' || order === 'POST_DESC' ) ? [posts] : [],
     where: {
       userName: { $like: `%${userName}%`},
       role: role>-1 ? role : { [Op.gt]: -1 }
@@ -127,7 +122,7 @@ module.exports = {
       sortResults(order)
     ]
   }),
-  commentOption: (userName, count, offset, order, posts, users) => ({
+  commentOption: (count, offset, order, posts, users) => ({
     // Opciones de la busqueda
     limit: count,
     offset: offset,
@@ -152,6 +147,15 @@ module.exports = {
     order: [
       sortResults(order,users)
     ]
+  }),
+  likeOption : (userId, count, offset) => ({
+    // Opciones de la busqueda
+    limit: count,
+    offset: offset,
+    where: {
+      userId: userId>-1 ? userId : { [Op.gt]: -1}
+                                
+    }
   })
 
 }
