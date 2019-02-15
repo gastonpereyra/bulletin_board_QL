@@ -1,12 +1,18 @@
 // Modulos
 const Sequelize = require('sequelize');
 const errors = require('./errors');
-const {tagOption} = require('./options');
+// Opciones para las busquedas
+const {tagOption, postOption} = require('./options');
 
 module.exports = {
   // ----- TAG
   // ***** Para Agregar los Posts del Tag 
-  postsTag: (tag) => tag.getPosts(),
+  postsTag: (tag, // Root
+             {count, offset, order}, // Parametros
+             {users}) => // Contexto
+                tag.getPosts(postOption('', count, offset, order, users)),
+  // ***** Para Agregar la cantidad de Posts del Tag
+  postsCountTag: (tag) => tag.getPosts().then( posts => posts ? posts.length : 0),
   // ----- Query
   // ***** Busco los Tags
   // Count y Offset para la paginación, offset desde donde y count cuantos, Default count: -1 (todos), offset= 0 (desde el principio)
