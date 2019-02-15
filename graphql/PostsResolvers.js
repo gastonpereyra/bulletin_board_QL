@@ -1,6 +1,7 @@
 // Modulos
 const Sequelize = require('sequelize');
 const errors = require('./errors');
+// Opciones para las busquedas
 const {postOption, tagOption, commentOption, likeOption} = require('./options');
 
 // Función para agregar Tags, siempre devuelvo el Post con los Tags agregados, si los hay
@@ -27,11 +28,19 @@ module.exports = {
   // uso el Root (user) y la función de Sequelize que viene por asociación.
   authorPost: (post) => post.getUser(),
   // ***** Agregar los Tag a Post, ordenados por el ID
-  tagsPost: (post, {count=-1, offset=0, order='ID_ASC'}, { posts }) => post.getTags(tagOption('',count,offset,order,posts)),
+  tagsPost: (post, // Root
+             {count=-1, offset=0, order='ID_ASC'},  // Parametro
+             { posts }) => // Contexto
+                post.getTags(tagOption('',count,offset,order,posts)),
   // ***** Agregar los Comentarios a Post, ordenados por el mas nuevo primero
-  commentsPost: (post, {count=-1, offset=0, order='CREATED_DESC'}, {posts, users}) => post.getComments(commentOption(count,offset,order,posts,users)),
+  commentsPost: (post, // Root
+                {count=-1, offset=0, order='CREATED_DESC'}, // Parametro
+                {posts, users}) => // Contexto
+                  post.getComments(commentOption(count,offset,order,posts,users)),
   // ***** Agregar los Like/Dislikes a Post
-  likesPost: (post,{userId= -1,count=-1,offset=0}) => post.getLikes(likeOption(userId,count,offset)),
+  likesPost: (post, // Root
+             {userId= -1,count=-1,offset=0}) => 
+                post.getLikes(likeOption(userId,count,offset)),
   // ***** Agregar el numero total de comentarios, likes, dislikes
   commentsCountPost: (post) => post.getComments().then(comments => comments ? comments.length : 0),
   likesCountPost: (post) => post.getLikes().then( likeList => likeList.reduce( (total, actual) => total+ actual.like ? 1 : 0, 0)),
@@ -115,9 +124,17 @@ module.exports = {
   giveLike: (root,{postId},{auth, likes}) => {
       // Si no esta loggeado no se puede hacer esta acción
     if (!auth) throw new Error(errors.LOG_01);
-      return likes.find({where:{ postId: postId, userId: auth.id}})
+    // Busco si ya le dieron Like/Dislike
+    return likes.find({where:{ postId: postId, userId: auth.id}})
         .then(isLike => {
-        if (isLike) return isLike.destroy().then(() => false);
+        // Si encuentro
+        if (isLike) {
+          // Si es un Dislike, convierto en Like
+          if (!isLike.like) return isLike.update({ like: true }).then( () => true);
+          // Si es un like, lo borro
+          else return isLike.destroy().then(() => false);
+        }
+      // Si no lo encuentro lo agrego
         return likes.create({postId, like: true, userId: auth.id}).then( () => true)
       });
     },
@@ -125,9 +142,17 @@ module.exports = {
   giveDislike: (root,{postId},{auth, likes}) => {
       // Si no esta loggeado no se puede hacer esta acción
     if (!auth) throw new Error(errors.LOG_01);
+    // Busco si ya le dieron DisLike/Like
     return likes.find({where:{ postId: postId, userId: auth.id}})
       .then(isDislike => {
-      if (isDislike) return isDislike.destroy().then(() => false);;
+      // Si encuentro
+      if (isDislike) {
+        // Si es un like, convierto en DisLike
+        if (isDislike.like) return isDislike.update({ like: false }).then( () => true);
+        // Si es un Dislike, lo borro
+        else return isDislike.destroy().then(() => false);
+      }
+      // Si no lo encuentro lo agrego
       return likes.create({postId, like: false, userId: auth.id}).then( () => true)
     });
   },
@@ -136,6 +161,7 @@ module.exports = {
       return posts.findOne({where: {id: id}})
         .then( post => {
           if (!post) throw new Error(errors.SEARCH_02);
+          // Devuelvo el post con una visita mas agregada
           return post.update({views: post.views+1}).then( p => p);
         })
         .catch(err => new Error(errors.SEARCH_00+" "+err));
