@@ -1,7 +1,7 @@
 // Modulos
 const Sequelize = require('sequelize');
 const errors = require('./errors');
-const {postOption} = require('./options');
+const {postOption, tagOption, commentOption, likeOption} = require('./options');
 
 // Función para agregar Tags, siempre devuelvo el Post con los Tags agregados, si los hay
 const addTagging = async (tagList, post, tags) => {
@@ -26,13 +26,16 @@ module.exports = {
   // ***** Agregar el User a Post
   // uso el Root (user) y la función de Sequelize que viene por asociación.
   authorPost: (post) => post.getUser(),
-  // ***** Agregar los Tag a Post
-  tagsPost: (post,args,{posts}) => post.getTags(),
-  // ***** Agregar los Comentarios a Post
-  commentsPost: (post) => post.getComments(),
+  // ***** Agregar los Tag a Post, ordenados por el ID
+  tagsPost: (post, {count=-1, offset=0, order='ID_ASC'}, { posts }) => post.getTags(tagOption('',count,offset,order,posts)),
+  // ***** Agregar los Comentarios a Post, ordenados por el mas nuevo primero
+  commentsPost: (post, {count=-1, offset=0, order='CREATED_DESC'}, {posts, users}) => post.getComments(commentOption(count,offset,order,posts,users)),
   // ***** Agregar los Like/Dislikes a Post
-  likesPost: (post) => post.getLikes().then( likeList => likeList.reduce( (total, actual) => total+ actual ? 1 : 0, 0)),
-  dislikesPost: (post) => post.getLikes().then( likeList => likeList.reduce( (total, actual) => total+ !actual ? 1 : 0, 0)),
+  likesPost: (post,{userId= -1,count=-1,offset=0}) => post.getLikes(likeOption(userId,count,offset)),
+  // ***** Agregar el numero total de comentarios, likes, dislikes
+  commentsCountPost: (post) => post.getComments().then(comments => comments ? comments.length : 0),
+  likesCountPost: (post) => post.getLikes().then( likeList => likeList.reduce( (total, actual) => total+ actual.like ? 1 : 0, 0)),
+  dislikesCountPost: (post) => post.getLikes().then( likeList => likeList.reduce( (total, actual) => total+ actual.like ? 0 : 1, 0)),
   // ----- QUERY
   getPosts: (root, {title='', count=-1, offset=0, order='ID_ASC' }, {auth, users, posts}) => {
       return posts.findAll(postOption(title, count, offset, order, users))
