@@ -157,7 +157,7 @@ module.exports = {
     if (auth.role <2) throw new Error(errors.LOG_05);
     // Convierto a Int el rol (no se puede modificar a ADMIN)
     const newRole = role === 'ADMIN' ? 2 : role === 'MOD' ? 1 : 0;
-    if (newRole === 2) throw new Error(errors.UPDATE_01);
+    // if (newRole === 2) throw new Error(errors.UPDATE_01);
     // Busco el user ID sino Error
     return users.findOne({ where: { id: userId } })
       .then(user => {
