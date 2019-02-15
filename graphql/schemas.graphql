@@ -2,41 +2,55 @@
 
 """ Datos del Usuario """
 type User {
+  """ ID asignado """
   id: Int
   """ Nombre de Usuario """
   userName: String
+  """ Email del Usuario """
   email: String
   """ 0 = Usuario, 1= Moderador, 2=Admin """
   role: Int
   """ URL a la imagen de avatar """
   image: String
+  """ Cantidad de Posts del Usuario """
+  postsCount: Int
+  """ Cantidad de Comentarios del Usuario """
+  commentsCount: Int
+  """ Cuando fue creado """
   createdAt: String
+  """ Cuando fue modificado por ultima vez """
   updatedAt: String
+  """ Ultima vez que se loggeo """
   lastLoginAt: String
-  """ Post creados por el Usuario """
-  posts: [Post]
-  comments: [Comment]
+  """ Post creados por el Usuario, orden por Default: más nuevo primero """
+  posts(count: Int, offset: Int, order: PostOrder): [Post]
+  """ Comentarios creados por el Usuario, orden por Default: más nuevo primero """
+  comments(count: Int, offset: Int, order: CommentOrder): [Comment]
 }
 
 """ Datos necesarios para Crear/Actualizar un Usuario """
 input UserInput {
-  """ Nombre de Usuario """
+  """ Nombre de Usuario, Obligatorio y Unico """
   userName: String!
-  """ Email del Usuario """
+  """ Email del Usuario, Obligatorio y Unico """
   email: String!
-  """ Password, 4 a 16 caracteres """
+  """ Password, 4 caracteres minimo, Obligatorio """
   password: String!
-  """ URL de la imagen del Usuario """
+  """ URL de la imagen del Usuario, Opcional """
   image: String
 }
 
-""" Roles posibles de Modificar """
+""" Niveles de Usuarios """
 enum Role {
+  """ Administrador, nivel 2 """
   ADMIN
-  USER
+  """ Moderador, nivel 1 """
   MOD
+  """ Usuario, nivel 0 """
+  USER
+  
 }
-""" Orden Posible para Usuarios """
+""" Orden de Usuarios por """
 enum UserOrder {
   """ ID ascendente """
   ID_ASC
@@ -58,11 +72,15 @@ enum UserOrder {
   POST_ASC
   """ Cantidad de Posts descendente """
   POST_DESC
+  """ Cantidad de Commentarios Ascendente """
+  COMMENT_ASC
+  """ Cantidad de Commentarios Descendente """
+  COMMENT_DESC
 }
 
-""" Info de User Loggeado """
+""" Información de Ingreso de User """
 type AuthUser {
-  """ token necesario para identificarse """
+  """ Token para Identificarse, dura 1 hora """
   token: String!
   """ Nombre del usuario """
   userName: String
@@ -72,19 +90,35 @@ type AuthUser {
 
 """ Datos de un Post """
 type Post {
+  """ ID asignado """
   id: Int
+  """ Titulo, hasta 50 caracteres """
   title: String
+  """ Mensaje, hasta 1500 caracteres """
   message: String
+  """ Cantida de visitas """
   views: Int
-  likes: Int
-  dislikes: Int
+  """ Cantidad de 'Me Gusta'/Likes """
+  likesCount: Int
+  """ Cantidad de 'No Me Gusta'/Dislikes """
+  dislikesCount: Int
+  """ Cantidad de Comentarios """
+  commentsCount: Int
+  """ Datos del Autor """
   author: User
-  comments: [Comment]
-  tags: [Tag]
+  """ Comentarios creados por el Usuario, orden por Default: Mas reciente primero """
+  comments(count: Int, offset: Int, order: CommentOrder): [Comment]
+  """ Tags asociados, orden por Default: ID mas bajo primero """
+  tags(count: Int, offset: Int, order: TagOrder): [Tag]
+  """ Datos de los Likes/Dislikes, buscar si un usuario ya dió alguno """
+  likes(userId: Int, count: Int, offset: Int): [Like]
+  """ Cuando fue creado """
   createdAt: String
+  """ Cuando fue modificado por ultima vez """
   updatedAt: String
 }
 
+""" Ordenar Posts por """
 enum PostOrder {
   """ ID ascendente """
   ID_ASC
@@ -98,35 +132,57 @@ enum PostOrder {
   UPDATED_ASC
   """ Fecha de ultima Modificación descendente """
   UPDATED_DESC
-  """ Nombre de la Etiqueta, orden alfabetico, ascendente """
+  """ Nombre de Usuario del Autor, orden alfabetico, ascendente """
   AUTHOR_ASC
-  """ Nombre de la Etiqueta, orden alfabetico, descendente """
+  """ Nombre de Usuario del Autor, orden alfabetico, descendente """
   AUTHOR_DESC
-  """ Cantidad de Posts ascendente """
-  TAG_ASC
-  """ Cantidad de Posts descendente """
-  TAG_DESC
+  """ Cantida de Likes, ascendentemente """
   LIKES_ASC
+  """ Cantida de Likes, desscendentemente """
   LIKES_DESC
+  """ Cantida de Disikes, ascendentemente """
   DISLIKES_ASC
+  """ Cantida de Disikes, desscendentemente """
   DISLIKES_DESC
+  """ Cantidad de Commentarios Ascendente """
   COMMENT_ASC
+  """ Cantidad de Commentarios Descendente """
   COMMENT_DESC
+}
+
+# ------ Like
+
+""" Datos de un Like/Dislike """
+type Like {
+  """ ID asignado """
+  id: Int
+  """ ID del Post """
+  postId: Int
+  """ ID del Autor """
+  userId: Int
+  """ True: Gusta/Like, False: No Gusta/Dislike"""
+  like: Boolean
 }
 
 # ------ Comentarios
 
 """ Datos de un Comentario """
 type Comment {
+  """ ID asignado """
   id: Int
+  """ Mensaje del Comentario, 500 caracteres máximo """
   message: String
+  """ Datos del Autor """
   author: User
+  """ Datos del Post """
   post: Post
+  """ Cuando fue creado """
   createdAt: String
+  """ Cuando fue modificado por ultima vez """
   updatedAt: String
 }
 
-""" Orden Posible para Etiquetas """
+""" Orden Posible para Comentarios """
 enum CommentOrder {
   """ ID ascendente """
   ID_ASC
@@ -154,17 +210,20 @@ enum CommentOrder {
 
 """ Datos de las Etiquetas """
 type Tag {
+  """ ID asignado """
   id: Int
-  """ nombre de la Etiqueta """
+  """ Nombre de la Etiqueta, 20 caracteres Máximo """
   name: String
+  """ Cuando fue creado """
   createdAt: String
-  updatedAt: String
-  """ Posts en los que se encuentra """
-  posts: [Post]
+  """ Cantidad de Posts asociados al Tag """
+  postsCount: Int
+  """ Posts en los que se encuentra, ordernados desde el mas reciente al mas antiguo"""
+  posts(count: Int, offset: Int, order: PostOrder): [Post]
 }
 
 
-""" Orden Posible para Etiquetas """
+""" Orden de Tags por """
 enum TagOrder {
   """ ID ascendente """
   ID_ASC
@@ -193,57 +252,65 @@ enum TagOrder {
 """ Funciones para la Busqueda """
 type Query {
   # User
-  """ Obtener todos los Usuarios """
+  """ Obtener varios Usuarios, orden por default: Alfabetico """
   getUsers(userName: String, role: Role, count: Int, offset: Int, order: UserOrder): [User]
-  """ Obtener un Usuario """
+  """ Obtener un Usuario por ID"""
   getUser(id: ID!): User
-  """ Datos del Usuario loggeado """
+  """ Datos del Usuario identificado """
   me: User
   """ Chequea si esta habilitado el nombre de Usuario """
   isUserName(userName: String): Boolean
   """ Chequea si existe el mail """
   isEmail(email: String): Boolean
   # Post
+  """ Obtener Posts, orden por Default: Mas nuevo primero """
   getPosts(title: String, count: Int, offset: Int, order: PostOrder): [Post]
+  """ Obetener un Post por ID"""
   getPost(id: Int!): Post
   # Tag
-  """ Obtiene todos las Etiquetas o por nombre, ordenadas """
+  """ Obtiene Tags, orden por Default: ID mas bajo primero """
   getTags(name: String, count: Int, offset: Int, order: TagOrder): [Tag]
-  """ Obtiene Una Etiqueta por ID """
+  """ Obtiene un Tag por ID """
   getTag(id: Int!): Tag
   # Comments
-  """ Busca los comentarios de todos los Posts """
-  getComments(userName: String, count: Int, offset: Int, order: CommentOrder): [Comment]
+  """ Busca comentarios, orden por Default: Mas nuevo primero """
+  getComments(count: Int, offset: Int, order: CommentOrder): [Comment]
 }
 
 # ------ Mutations
 
 """ Funciones para los cambios """
 type Mutation {
-  """ Para Loggearse """
+  """ Para Ingresar, necesita estar Registrado """
   logIn(userName: String!, password: String!): AuthUser
   """ Registrarse, Password de 4 caracteres minimo, Nombre de Usuario y Email unicos """
   signIn(input: UserInput!): AuthUser
-  """ Actualizar Usuario, debe estar Loggeado """
+  """ Actualizar Usuario, debe estar identifacado y pasar datos anteriores a la actualización """
   updateUser(newUser: UserInput!, oldUser: UserInput!): AuthUser
-  """ Admin Cambia Roles de Usuario """
+  """ Administrador Cambia Niveles de Usuario """
   changeRole(userId: ID!, role: Role!): User
-  """ Admin Borra Usuarios """
+  """ Adminastrador Borra Usuarios """
   deleteUser(id: ID!): User
   # Post
+  """ Usuario crea un Post """
   createPost(title: String!, message: String!, tagList: [String]): Post
+  """ Autor o Moderador/Administrador Actualiza Post """
   updatePost(id: Int!, title: String, message: String, tagList: [String]): Post
+  """ Autor o Moderador/Administrador Borra Post """
   deletePost(id: Int!): Post
+  """ Para Ingresar a Ver un Post """
   viewPost(id: Int!): Post
   # Comment
-  """ Crear un Comentario en un post. Debe estar loggeado """
+  """ Crear un Comentario en un post """
   createComment(postId: Int!, message: String!): Comment
-  """ Edita un Comentario. Debe estar loggeado, Autor o MOD o ADMIN """
+  """ Autor o Moderador/Administrador, Edita un Comentario."""
   editComment(id: Int!, message: String!): Comment
-  """ Borrar un Comentario. Debe estar loggeado, Autor o MOD o ADMIN """
+  """ Autor o Moderador/Administrador, Borra un Comentario."""
   deleteComment(id: Int!): Comment
   # Like
+  """ Usuario da 'Me Gusta' en Post, si ya dió previamente lo saca """
   giveLike(postId: Int!): Boolean
+  """ Usuario da 'No Me Gusta' en Post, si ya dió previamente lo saca """
   giveDislike(postId: Int!): Boolean
   # Tag
   """ Borra un Tag, Solo Admin, Si no esta asociado a ningun Post """
