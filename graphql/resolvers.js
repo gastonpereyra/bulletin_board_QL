@@ -2,7 +2,7 @@
 const {postsUser, commentsUser, postsCountUser, commentsCountUser,
        getUsers, getUser, me, isEmail, isUserName, 
        logIn, signIn, updateUser, changeRole, deleteUser } = require('./UsersResolvers');
-const {postsTag, getTags, getTag, deleteTag} = require('./TagsResolvers');
+const {postsTag, postsCountTag, getTags, getTag, deleteTag} = require('./TagsResolvers');
 const {authorPost, tagsPost, commentsPost, likesPost, likesCountPost, dislikesCountPost, commentsCountPost, 
        getPosts, getPost, viewPost, 
        createPost, updatePost, deletePost,giveLike, giveDislike} = require('./PostsResolvers');
@@ -10,7 +10,7 @@ const {postComment, getComments, authorComment, createComment, editComment ,dele
 
 // Listos para Exportar
 module.exports = {
-  // Agregar atributos especiales
+  // Atributos especiales de los Modelos
   Post: {
     author: authorPost,
     tags: tagsPost,
@@ -27,7 +27,8 @@ module.exports = {
     commentsCount: commentsCountUser,
   },
   Tag: {
-    posts: postsTag
+    posts: postsTag,
+    postsCount: postsCountTag
   },
   Comment: {
     post: postComment,
