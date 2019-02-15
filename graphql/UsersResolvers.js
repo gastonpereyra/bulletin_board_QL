@@ -2,24 +2,35 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const errors = require('./errors');
-const {userOption} = require('./options');
+// Para agregar opciones en las busquedas
+const {userOption, postOption, commentOption} = require('./options');
 
 module.exports = {
   // ----- USER
-  // uso el Root (user) y la función de Sequelize que viene por asociación.
   // ***** Para Agregar los Posts del usuario
-  postsUser: (user) => user.getPosts(),
+  postsUser: (user, //  root
+              {count=-1, offset=0, order='CREATED_DESC'}, // parametros
+              {users}) => // context
+                  user.getPosts(postOption('', count, offset, order, users)),
   // ***** Para Agregar los Comentarios del usuario
-  commentsUser: (user) => user.getComments(),
+  commentsUser: (user, //  root
+                {count=-1, offset=0, order='CREATED_DESC'}, // parametros
+                {posts,users}) =>  // context
+                  user.getComments(commentOption(count,offset,order,posts,users)),
+  // ***** Cantidad de Posts y Comentarios del Usuario
+  postsCountUser: (user) => user.getPosts().then( posts => posts ? posts.length : 0),
+  commentsCountUser: (user) => user.getComments().then( comments => comments ? comments.length : 0),
   // ----- Queries
   // ***** Para buscar todos los usuarios
   // Count y Offset para la paginación, offset desde donde y count cuantos, Default count: -1 (todos), offset= 0 (desde el principio)
   // Order el orden, default= 'ID_ASC' (ordenado por ID creciente)
   // de Context traigo los modelos de Usuaruis y Posts
   // Si no encuentra devuelve NULL
-  getUsers: (root,{count=-1, offset=0, order='ID_ASC', userName='', role=-1}, {users, posts}) => {
+  getUsers: (root,{count=-1, offset=0, order='USERNAME_ASC', userName='', role=-1}, {users}) => {
+      // Convierto los roles de String a Int
       const roleToSearch = role === 'ADMIN' ? 2 : role === 'MOD' ? 1 : role === 'USER' ? 0 : role;
-      return users.findAll(userOption(userName, roleToSearch, count, offset, order, posts))
+      // Busco los usuarios
+      return users.findAll(userOption(userName, roleToSearch, count, offset, order))
         .then( usersList => usersList)
         // Si surge algun problema
         .catch(err => new Error(errors.SEARCH_00));
@@ -126,12 +137,10 @@ module.exports = {
         // Si pasa el chequeo, busco actualizar
         return users.update({...newUser,lastLoginAt: Date.now()}, { where: { id: auth.id, userName: oldUser.userName, email: oldUser.email }})
           .then( updatedUser => {
-          console.log("H");
           // Si no encuentra (por alguna razon) tira error
           if (updatedUser[0] === 0) throw new Error();
           // Si actualiza, Crea el nuevo Token
           const token = jwt.sign({ id: auth.id, userName: newUser.userName }, process.env.JWT_SECRET, { expiresIn: '1h' });
-          console.log("H");
           // Retorno el objeto.
             return ({
               token,
