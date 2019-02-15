@@ -1,8 +1,9 @@
 // Resolvers
-const {postsUser, getUsers, getUser, me, isEmail, isUserName, 
+const {postsUser, commentsUser, postsCountUser, commentsCountUser,
+       getUsers, getUser, me, isEmail, isUserName, 
        logIn, signIn, updateUser, changeRole, deleteUser } = require('./UsersResolvers');
 const {postsTag, getTags, getTag, deleteTag} = require('./TagsResolvers');
-const {authorPost, tagsPost, commentsPost, likesPost, dislikesPost, 
+const {authorPost, tagsPost, commentsPost, likesPost, likesCountPost, dislikesCountPost, commentsCountPost, 
        getPosts, getPost, viewPost, 
        createPost, updatePost, deletePost,giveLike, giveDislike} = require('./PostsResolvers');
 const {postComment, getComments, authorComment, createComment, editComment ,deleteComment } = require('./CommentsResolvers');
@@ -15,10 +16,15 @@ module.exports = {
     tags: tagsPost,
     comments: commentsPost,
     likes: likesPost,
-    dislikes: dislikesPost,
+    commentsCount: commentsCountPost,
+    likesCount: likesCountPost,
+    dislikesCount: dislikesCountPost,
   },
   User: {
-    posts: postsUser
+    posts: postsUser,
+    comments: commentsUser,
+    postsCount: postsCountUser,
+    commentsCount: commentsCountUser,
   },
   Tag: {
     posts: postsTag
