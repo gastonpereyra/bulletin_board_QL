@@ -1,7 +1,9 @@
-Bulletin Board Server
+Bulletin Board Server :clipboard:
 =================
 
 Servidor con la API del Tablón de Anuncios.
+
+[Ir al Playground](https://bullentin-board-ql.glitch.me/graphql/)
 
 UI del Tablón de Anuncios: **PROXIMAMENTE**.
 
@@ -9,9 +11,7 @@ UI del Tablón de Anuncios: **PROXIMAMENTE**.
 
 - - - -
 
-## Contenido
-
-**Table of Contents**
+## Contenido :book:
 
 + Versión
 + EndPoint
@@ -50,9 +50,11 @@ UI del Tablón de Anuncios: **PROXIMAMENTE**.
 + Hecho Con
 - - - -
 
-## Versión
+## Versión :vs:
 
 Versión numero: *1.0.0*
+
+:one: :black_circle: :zero: :black_circle: :zero:
 
 Cuenta con:
 
@@ -68,7 +70,7 @@ Cuenta con:
 
 - - - -
 
-## Endpoint
+## Endpoint :end:
 
 API construida en *Graphql* con *Apollo*.
 
@@ -76,7 +78,7 @@ Endpoint: `https://bullentin-board-ql.glitch.me/graphql`
 
 - - - -
 
-## JWT
+## JWT :symbols:
 
 Para mantener las sesiones se usa *Json Web Tokens*.
 
@@ -106,7 +108,8 @@ Ejemplo:
 ```
 
 - - - -
-## Usuario
+
+## Usuario :busts_in_silhouette:
 
 Los usuarios tienen los siguientes atributos:
 
@@ -125,7 +128,7 @@ Los usuarios tienen los siguientes atributos:
 
 Adicionalmente se necesitará un `password` tanto para registrarse, ingresar como actualizar.
 
-### Registrate
+### Registrate :black_nib:
 
 `signIn(input: {userName: String, password: String, email: String, image: String})`
 
@@ -149,7 +152,7 @@ signIn(input:{userName:"Ejemplo", password:"abc123", email:"ejemplo@falsa.com"})
 }
 ```
 
-### Ingresar
+### Ingresar :raising_hand:
 
 `logIn(userName: String, password: String)`
 
@@ -171,7 +174,7 @@ logIn(userName:"Ejemplo", password:"abc123") {
 }
 ```
 
-### Actualizar
+### Actualizar :scissors:
 
 `updateUser(newUser: {userName: String, password: String, email: String, image: String}, oldUser: {userName: String, password: String, email: String, image: String})`
 
@@ -196,7 +199,7 @@ updateUser( newUser:{userName: "UnEjemplo", password: "123abc", email:"ejemplo@m
 }
 ```
 
-### Niveles de Usuario
+### Niveles de Usuario :hotel:
 
 Existen 3 niveles de Usuarios
 
@@ -225,7 +228,7 @@ mutation {
   }
 }
 ```
-### Borrar un usuario
+### Borrar un usuario :bomb:
 
 Solo un `ADMIN` puede borrarlo. Sus Posts y Comentarios no se pierden
 
@@ -250,7 +253,7 @@ mutation {
 
 - - - -
 
-## Busqueda de Usuarios
+## Busqueda de Usuarios :mag_right:
 
 Pueden **Ordenarse** por:
 
@@ -261,7 +264,7 @@ Pueden **Ordenarse** por:
 * Cantidad de Posts: `POSTS_ASC` y `POSTS_DESC`
 * Cantidad de Comentarios: `COMMENTS_ASC` y `COMMENTS_DESC`
 
-### Por ID
+### Por ID :id:
 
 `getUser(id: ID!)`
 
@@ -290,7 +293,7 @@ query {
 }
 ```
 
-### Usuario Identificado
+### Usuario Identificado :star:
 
 `me`
 
@@ -317,7 +320,7 @@ query {
 }
 ```
 
-### Varios Usuarios
+### Varios Usuarios :family:
 
 `getUsers(userName: String, role: Role, count: Int, offset: Int, order: UserOrder)`
 
@@ -352,7 +355,7 @@ query {
 }
 ```
 
-### Nombre de Usuario Habilitado
+### Nombre de Usuario Habilitado :crystal_ball:
 
 `isUserName(userName: String)`
 
@@ -368,7 +371,7 @@ query {
 }
 ```
 
-### Email Habilitado
+### Email Habilitado :email:
 
 `isEmail(email: String)`
 
@@ -385,7 +388,7 @@ query {
 
 - - - -
 
-## Posts
+## Posts :speech_balloon:
 
 Los  tienen los siguientes atributos:
 
@@ -409,7 +412,7 @@ En cuanto a los `likes(userId: 1)` busca si el usuario de ID 1, dio like o disli
 * `userId`
 * `like` : `true`: 'Me Gusta'/like, `false`: 'No Me Gusta'/dislike
 
-### Crear
+### Crear :love_letter:
 
 `createPost(title: String, message: String, tagList: [String])`
 
@@ -449,7 +452,7 @@ createPost(title:"Hola Universo", message:"Mi primer post, cortito.", tagList: [
 }
 ```
 
-### Editar
+### Editar :wrench:
 
 `updatePost(id: Int, title: String, message: String, tagList:[String])`
 
@@ -491,7 +494,7 @@ mutation {
 }
 ```
 
-### Borrar
+### Borrar :boom:
 
 `deletePost(id: Int)`
 
@@ -516,7 +519,7 @@ mutation {
 }
 ```
 
-### Visitar Post
+### Visitar Post :ok_hand:
 
 `viewPost(id: Int)`
 
@@ -538,7 +541,7 @@ mutation {
 }
 ```
 
-### Me Gusta
+### Me Gusta :thumbsup:
 
 `giveLike(postId: Int)`
 
@@ -561,7 +564,7 @@ mutation {
 }
 ```
 
-### No Me Gusta
+### No Me Gusta :-1:
 
 `giveDislike(postId: Int)`
 
@@ -585,7 +588,7 @@ mutation {
 ```
 - - - -
 
-## Busqueda de Posts
+## Busqueda de Posts :mag:
 
 Pueden **Ordenarse** por:
 
@@ -597,7 +600,7 @@ Pueden **Ordenarse** por:
 * Cantidad de 'No Me Gusta': `DISLIKES_ASC` y `DISLIKES_DESC`
 * Cantidad de Comentarios: `COMMENTS_ASC` y `COMMENTS_DESC`
 
-### Por ID
+### Por ID :id:
 
 `getPost(id: Int)`
 
@@ -634,7 +637,7 @@ query {
 }
 ```
 
-### Varios Posts
+### Varios Posts :page_with_curl:
 
 `getPosts(title: String, count: Int, offset: Int, order: PostOrder)`
 
@@ -664,7 +667,7 @@ query {
 
 - - - -
 
-## Tags
+## Tags :hash:
   
 Los  tienen los siguientes atributos:
 
@@ -683,7 +686,7 @@ Pueden **Ordenarse** por:
 * Cantidad de Posts: `POSTS_ASC` y `POSTS_DESC`
 
 
-### Buscar por ID
+### Buscar por ID :mag_right:
 
 `getTag(id: Int)`
 
@@ -707,7 +710,7 @@ query {
 }
 ```
 
-### Buscar varios
+### Buscar varios :mag:
 
 `getTags(name: String, count: Int, offset: Int, order: TagOrder)`
 
@@ -737,7 +740,7 @@ query {
 }
 ```
 
-### Borrar Tags
+### Borrar Tags :bomb:
 
 `deleteTag(id: Int)`
 
@@ -764,7 +767,7 @@ mutation {
 
 - - - -
 
-## Comentarios
+## Comentarios :thought_balloon:
 
 Los  tienen los siguientes atributos:
 
@@ -783,7 +786,7 @@ Pueden **Ordenarse** por:
 * Creación: `CREATED_ASC` y `CREATED_DESC`
 * Ultima Actualización: `UPDATED_ASC` y `UPDATED_DESC`
 
-### Crear
+### Crear :sparkles:
 
 `createComment(postId: Int, message:String)`
 
@@ -815,7 +818,7 @@ mutation {
 }
 ```
 
-### Editar
+### Editar :hammer:
 
 `editComment(id: Int, message:String)`
 
@@ -840,7 +843,7 @@ mutation {
 }
 ```
 
-### Borrar
+### Borrar :collision:
 
 `deleteComment(id: Int)`
 
@@ -865,7 +868,7 @@ mutation {
 }
 ```
 
-### Buscar varios
+### Buscar varios :mag:
 
 `getComments(count: Int, offset: Int, order: CommentOrder)`
 
@@ -904,7 +907,7 @@ query {
 
 - - - -
 
-## Hecho con
+## Hecho con :speaker:
 
 * Node.js
 * Express.js
@@ -913,11 +916,9 @@ query {
 * Sequelize
 * SQL - SQLite 3
 * Json Web Token
-* Bulma
-* Vue
 * Passport
 * [Glitch](https://glitch.com/)
 
-## Hecho por Gastón Pereyra
+## Hecho por Gastón Pereyra :man:
 * Github: <https://github.com/gastonpereyra/bulletin_board_QL>
 * Docs del Bulletin Board: <https://github.com/gastonpereyra/bulletin_board_QL/tree/master/docs/>
