@@ -26,6 +26,8 @@ Que deberian tener los usuarios ?
 | createdAt | String | DATE | Datetime |
 | updatedAt | String | DATE | Datetime |
 | | | | |
+| postsCount | Int | getPosts.length | Cantidad de Post |
+| commentsCount | Int | getComments.length | Cantidad de Comentarios |
 | posts | [Post] | Usuario hasMany Post | Relaci처n con Posts|
 | comments | [Comement] | Usuario hasMany Comment | Relaci처n con Comments |
 
@@ -36,6 +38,7 @@ Que deberian tener los usuarios ?
 | id | Int/ID | INTEGER | asignado por la DB, autoincremental |
 | nombre | String | STRING | Unico |
 | | | | |
+| postsCount | Int | getPosts.length | Cantidad de Post |
 | posts | [Post] | Tag belongsToMany Post | Relaci처n con Posts |
 
 ## Post / Mensajes
@@ -46,10 +49,12 @@ Que deberian tener los usuarios ?
 | title | String | STRING  | Titulo del Post |
 | message | String | TEXT | Mensaje |
 | views | Int | INTEGER | Visitas |
-| visible | Boolean | BOOLEAN | |
 | createdAt | String | DATE | Datetime |
 | updatedAt | String | DATE | Datetime |
 | | | | |
+| likesCount | Int | getLike(true).length | Cantidad de Likes |
+| dislikesCount | Int | getLike(false).length | Cantidad de DisLikes |
+| commentsCount | Int | getComments.length | Cantidad de Comentarios |
 | author | User | Post belongsTo User | Relaci처n con User |
 | comments | [Comment] | Post hasMany Comment | Relaci처n con Comment |
 | tags | [Tag] | Post belongsToMany Tag | Relaci처n con Tag |
@@ -74,7 +79,7 @@ En GrahpQL solo van a ser un conteo. Pero en la Base de datos la estrategia ser�
 
 | key | GraphQL | SQL | Comentario |
 | --- | ------- | --- | ---------- |
-| like | - | String | l (like) o d (dislike) |
+| like | - | BOOLEAN | true (like) o false (dislike) |
 | userId | - | Like belongsTo User | Relaci처n con User |
 | postId | - | Like belongsto Post | Relaci처n con Posts |
 
