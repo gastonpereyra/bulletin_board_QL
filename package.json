@@ -1,7 +1,7 @@
 {
   "author": "Gastón Pereyra",
   "name": "Bullentin-Board-QL",
-  "version": "0.1.0",
+  "version": "1.0.2",
   "description": "An App to simulate a Bulletin Board",
   "main": "server.js",
   "scripts": {
