@@ -8,7 +8,7 @@ module.exports = {
   // ----- TAG
   // ***** Para Agregar los Posts del Tag 
   postsTag: (tag, // Root
-             {count, offset, order}, // Parametros
+             {count=-1, offset=0, order="CREATED_DESC"}, // Parametros
              {users}) => // Contexto
                 tag.getPosts(postOption('', count, offset, order, users)),
   // ***** Para Agregar la cantidad de Posts del Tag
