@@ -43,8 +43,8 @@ module.exports = {
                 post.getLikes(likeOption(userId,count,offset)),
   // ***** Agregar el numero total de comentarios, likes, dislikes
   commentsCountPost: (post) => post.getComments().then(comments => comments ? comments.length : 0),
-  likesCountPost: (post) => post.getLikes().then( likeList => likeList.reduce( (total, actual) => total+ actual.like ? 1 : 0, 0)),
-  dislikesCountPost: (post) => post.getLikes().then( likeList => likeList.reduce( (total, actual) => total+ actual.like ? 0 : 1, 0)),
+  likesCountPost: (post) => post.getLikes().then( likeList => likeList.reduce( (total, actual) => total+ (actual.like ? 1 : 0), 0)),
+  dislikesCountPost: (post) => post.getLikes().then( likeList => likeList.reduce( (total, actual) => total+ (actual.like ? 0 : 1), 0)),
   // ----- QUERY
   getPosts: (root, {title='', count=-1, offset=0, order='ID_ASC' }, {auth, users, posts}) => {
       return posts.findAll(postOption(title, count, offset, order, users))
