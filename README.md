@@ -52,9 +52,9 @@ UI del Tablón de Anuncios: **PROXIMAMENTE**.
 
 ## Versión :vs:
 
-Versión numero: *1.0.0*
+Versión numero: *1.0.2*
 
-:one: :black_circle: :zero: :black_circle: :zero:
+:one: :black_circle: :zero: :black_circle: :two:
 
 Cuenta con:
 
