@@ -275,6 +275,8 @@ type Query {
   # Comments
   """ Busca comentarios, orden por Default: Mas nuevo primero """
   getComments(count: Int, offset: Int, order: CommentOrder): [Comment]
+  """ Obtiene un Comentario por ID """
+  getComment(id: Int!): Comment
 }
 
 # ------ Mutations
