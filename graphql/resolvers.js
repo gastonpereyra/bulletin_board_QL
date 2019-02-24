@@ -6,7 +6,7 @@ const {postsTag, postsCountTag, getTags, getTag, deleteTag} = require('./TagsRes
 const {authorPost, tagsPost, commentsPost, likesPost, likesCountPost, dislikesCountPost, commentsCountPost, 
        getPosts, getPost, viewPost, 
        createPost, updatePost, deletePost,giveLike, giveDislike} = require('./PostsResolvers');
-const {postComment, getComments, authorComment, createComment, editComment ,deleteComment } = require('./CommentsResolvers');
+const {postComment, getComments, getComment, authorComment, createComment, editComment ,deleteComment } = require('./CommentsResolvers');
 
 // Listos para Exportar
 module.exports = {
@@ -50,6 +50,7 @@ module.exports = {
     getTag,
     // Comments
     getComments,
+    getComment,
   },
   // Agregar los Modificaciones
   Mutation: {
