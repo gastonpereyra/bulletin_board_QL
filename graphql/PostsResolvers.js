@@ -46,7 +46,7 @@ module.exports = {
   likesCountPost: (post) => post.getLikes().then( likeList => likeList.reduce( (total, actual) => total+ (actual.like ? 1 : 0), 0)),
   dislikesCountPost: (post) => post.getLikes().then( likeList => likeList.reduce( (total, actual) => total+ (actual.like ? 0 : 1), 0)),
   // ----- QUERY
-  getPosts: (root, {title='', count=-1, offset=0, order='ID_ASC' }, {auth, users, posts}) => {
+  getPosts: (root, {title='', count=-1, offset=0, order='CREATED_DESC' }, {auth, users, posts}) => {
       return posts.findAll(postOption(title, count, offset, order, users))
         .then( post => post)
     },
