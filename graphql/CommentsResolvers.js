@@ -17,6 +17,11 @@ module.exports = {
         .then( commentsList => commentsList)
         .catch(err => new Error(errors.SEARCH_00)); 
     },
+  getComment: (root,{id}, {comments, users, posts}) => {
+      return comments.findOne({where: {id} })
+        .then( comment => comment)
+        .catch(err => new Error(errors.SEARCH_00)); 
+    },
   // ----- MUTATIONS
   // ***** Para crear los Comentarios
   createComment: (root,{postId, message},{auth, comments}) => {
