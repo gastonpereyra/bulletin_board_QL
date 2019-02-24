@@ -46,6 +46,7 @@ UI del Tablón de Anuncios: **PROXIMAMENTE**.
   * Crear
   * Editar
   * Borrar
+  * Buscar por ID
   * Buscar varios
 + Hecho Con
 - - - -
@@ -864,6 +865,40 @@ mutation {
     id
     message
     # Resto de Atributos
+  }
+}
+```
+
+## Buscar :mag:
+
+`getComment(id: Int!)`
+
+**OBLIGATORIO** : `id` (id del comentario),
+
+
+Devuelve un Comentario o `null`
+
+EJEMPLO
+
+```graphql
+# Busca los primeros 5 comentarios ordenados alfabeticamente por nombre de Autor
+query {
+  getComments(id: 5){
+    message
+    id
+    post {
+      id
+    }
+    author {
+      userName
+    }
+  }
+  getTags {
+    name
+    posts{
+      id
+      title
+    }
   }
 }
 ```
