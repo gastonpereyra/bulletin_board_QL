@@ -13,8 +13,11 @@ module.exports = {
   postComment: (comment) => comment.getPost(),
   // ----- QUERIES
   getComments: (root,{count=-1, offset=0, order='ID_ASC'}, {comments, users, posts}) => {
-      return comments.findAll(commentOption(count,offset,order,posts,users))
-        .then( commentsList => commentsList)
+      return comments.findAndCountAll(commentOption(count,offset,order,posts,users))
+        .then( list => ({
+          count: list.count,
+          comments: list.rows
+        }))
         .catch(err => new Error(errors.SEARCH_00)); 
     },
   getComment: (root,{id}, {comments, users, posts}) => {
