@@ -53,9 +53,9 @@ UI del Tablón de Anuncios: **PROXIMAMENTE**.
 
 ## Versión :vs:
 
-Versión numero: *1.1.0*
+Versión numero: *1.2.0*
 
-:one: :black_circle: :one: :black_circle: :zero:
+:one: :black_circle: :two: :black_circle: :zero:
 
 Cuenta con:
 
@@ -333,7 +333,7 @@ Todos los parametros son **Opcionales**
 * `offset` desde que posición / Default: principio (0)
 * `order` Tipo de ordenamiento / Default: Alfabeticamente por userName
 
-Devuelve una lista de Usuarios, o `null`
+Devuelve la cantidad total de registros y lista de Usuarios, o `null`
 
 EJEMPLO
 
@@ -341,17 +341,20 @@ EJEMPLO
 # Busca 10 Usuarios que en su nombre tengan la frase 'Juan', solo Usuarios, ordenados por cantidad de Post (más cantidad primero), desde el principio de la lista
 query {
   getUsers(userName: "Juan", count:10, offset: 0, order: POSTS_DESC, role: USER) {
-    userName
-    id
-    email
-    role
-    image
-    createdAt
-    updatedAt
-    lastLoginAt
-    postsCount
-    commentsCount
-    # Mas atributos de Usuario
+    count
+    users {
+      userName
+      id
+      email
+      role
+      image
+      createdAt
+      updatedAt
+      lastLoginAt
+      postsCount
+      commentsCount
+      # Mas atributos de Usuario
+    }
   }
 }
 ```
@@ -649,7 +652,7 @@ Todos los parametros son **Opcionales**
 * `offset` desde que posición / Default: principio (0)
 * `order` Tipo de ordenamiento / Default: Mas Reciente primero
 
-Devuelve una lista de Posts. Sino `null`
+Devuelve la cantidad total de registros y lista de Posts, o `null`
 
 EJEMPLO
 
@@ -657,12 +660,15 @@ EJEMPLO
 # Busca los posts cuyo titulo incluya "Hola", ordenados por Cantidad de Comentarios, mas cantidad primero, desde el 2 de la lista y 12 posts que le siguen si existen
 query {
   getPosts(title: "Hola", count: 12, offset: 2, order: COMMENT_DESC) {
+   count
+   posts {
     title
     message
     likesCount
     dislikesCount
     commentsCount
     # Y otros atributos de Post
+   }
 }
 ```
 
@@ -722,7 +728,7 @@ Todos los parametros son **Opcionales**
 * `offset` desde que posición / Default: principio (0)
 * `order` Tipo de ordenamiento / Default: ID ascendente
 
-Devuelve una lista de Tags.
+Devuelve la cantidad total de registros y lista de Tags, o `null`
 
 EJEMPLO
 
@@ -730,12 +736,15 @@ EJEMPLO
 # Busca 100 Tags que tengan "Es" en su nombre, desde el numero 100, ordenados alfabeticamente por nombre del Tag desde Z a A
 query {
   getTags(name: "Es", count: 100, offset: 100, order: NAME_DESC) {
+   count
+   tags {
     name
     postCount
     post {
       id
     }
     # Resto de Atributos
+   }
   }
 
 }
@@ -913,7 +922,7 @@ Todos los parametros son **Opcionales**
 * `offset` desde que posición / Default: principio (0)
 * `order` Tipo de ordenamiento / Default: Mas Reciente Primero
 
-Devuelve una lista de Comments o `null`
+Devuelve la cantidad total de registros y lista de Comentarios, o `null`
 
 EJEMPLO
 
@@ -921,6 +930,8 @@ EJEMPLO
 # Busca los primeros 5 comentarios ordenados alfabeticamente por nombre de Autor
 query {
   getComments(count: 5, offset:0, order: AUTHOR_ASC){
+   count
+   comments {
     message
     id
     post {
@@ -929,13 +940,7 @@ query {
     author {
       userName
     }
-  }
-  getTags {
-    name
-    posts{
-      id
-      title
-    }
+   }
   }
 }
 ```
