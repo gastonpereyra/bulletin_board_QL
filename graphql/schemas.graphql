@@ -96,7 +96,7 @@ type Post {
   title: String
   """ Mensaje, hasta 1500 caracteres """
   message: String
-  """ Cantida de visitas """
+  """ Cantidad de visitas """
   views: Int
   """ Cantidad de 'Me Gusta'/Likes """
   likesCount: Int
@@ -233,10 +233,6 @@ enum TagOrder {
   CREATED_ASC
   """ Fecha de Creación descendente """
   CREATED_DESC
-  """ Fecha de ultima Modificación ascendente """
-  UPDATED_ASC
-  """ Fecha de ultima Modificación descendente """
-  UPDATED_DESC
   """ Nombre de la Etiqueta, orden alfabetico, ascendente """
   NAME_ASC
   """ Nombre de la Etiqueta, orden alfabetico, descendente """
@@ -247,15 +243,39 @@ enum TagOrder {
   POST_DESC
 }
 
+""" La cantidad total de registros encontrados y esos registros """
+type Users {
+  count: Int
+  users: [User]
+}
+
+""" La cantidad total de registros encontrados y esos registros """
+type Posts {
+  count: Int
+  posts: [Post]
+}
+
+""" La cantidad total de registros encontrados y esos registros """
+type Comments {
+  count: Int
+  comments: [Comment]
+}
+
+""" La cantidad total de registros encontrados y esos registros """
+type Tags {
+  count: Int
+  tags: [Tag]
+}
+
 # ------ Queries
 
 """ Funciones para la Busqueda """
 type Query {
   # User
   """ Obtener varios Usuarios, orden por default: Alfabetico """
-  getUsers(userName: String, role: Role, count: Int, offset: Int, order: UserOrder): [User]
+  getUsers(userName: String, role: Role, count: Int, offset: Int, order: UserOrder): Users
   """ Obtener un Usuario por ID"""
-  getUser(id: ID!): User
+  getUser(id: Int!): User
   """ Datos del Usuario identificado """
   me: User
   """ Chequea si esta habilitado el nombre de Usuario """
@@ -264,17 +284,17 @@ type Query {
   isEmail(email: String): Boolean
   # Post
   """ Obtener Posts, orden por Default: Mas nuevo primero """
-  getPosts(title: String, count: Int, offset: Int, order: PostOrder): [Post]
+  getPosts(title: String, count: Int, offset: Int, order: PostOrder): Posts
   """ Obetener un Post por ID"""
   getPost(id: Int!): Post
   # Tag
   """ Obtiene Tags, orden por Default: ID mas bajo primero """
-  getTags(name: String, count: Int, offset: Int, order: TagOrder): [Tag]
+  getTags(name: String, count: Int, offset: Int, order: TagOrder): Tags
   """ Obtiene un Tag por ID """
   getTag(id: Int!): Tag
   # Comments
   """ Busca comentarios, orden por Default: Mas nuevo primero """
-  getComments(count: Int, offset: Int, order: CommentOrder): [Comment]
+  getComments(count: Int, offset: Int, order: CommentOrder): Comments
   """ Obtiene un Comentario por ID """
   getComment(id: Int!): Comment
 }
