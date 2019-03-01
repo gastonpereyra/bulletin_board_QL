@@ -30,8 +30,11 @@ module.exports = {
       // Convierto los roles de String a Int
       const roleToSearch = role === 'ADMIN' ? 2 : role === 'MOD' ? 1 : role === 'USER' ? 0 : role;
       // Busco los usuarios
-      return users.findAll(userOption(userName, roleToSearch, count, offset, order))
-        .then( usersList => usersList)
+      return users.findAndCountAll(userOption(userName, roleToSearch, count, offset, order))
+        .then( list => ({
+          count: list.count,
+          users: list.rows
+        }))
         // Si surge algun problema
         .catch(err => new Error(errors.SEARCH_00));
     },
