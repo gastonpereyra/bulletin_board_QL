@@ -308,7 +308,7 @@ type Mutation {
   """ Registrarse, Password de 4 caracteres minimo, Nombre de Usuario y Email unicos """
   signIn(input: UserInput!): AuthUser
   """ Actualizar Usuario, debe estar identifacado y pasar datos anteriores a la actualización """
-  updateUser(newUser: UserInput!, oldUser: UserInput!): AuthUser
+  updateUser(user: UserInput!, password: String!): AuthUser
   """ Administrador Cambia Niveles de Usuario """
   changeRole(userId: ID!, role: Role!): User
   """ Adminastrador Borra Usuarios """
