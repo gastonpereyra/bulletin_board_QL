@@ -125,29 +125,29 @@ module.exports = {
   // Input: nuevos datos del User, y los viejos datos
   // con Auth busca el usuario loggeado, y los viejos datos deben coincidir con el encontrado sino un loggeado quiere modificar otro usuario
   // Devuelve un nuevo token ya que se puede cambiar el usuario y esto va a probocar que falle la autenticación.
-  updateUser: (root, {newUser, oldUser}, { auth, users })=> {
+  updateUser: (root, {user, password}, { auth, users })=> {
     // Si no esta loggeado no se puede hacer esta acción
     if (!auth) throw new Error(errors.LOG_01);
     // Contraseña debe ser mayor a 4 caracteres
-    if (newUser.password.length<4) throw new Error(errors.SIGN_02);
+    if (password.length<4) throw new Error(errors.SIGN_02);
     // Busco el user (id del loggeado, datos del user a cambiar, deben ser el mismo)
-    return users.findOne({ where: {id: auth.id, userName: oldUser.userName, email: oldUser.email} })
-      .then(user => {
+    return users.findOne({ where: {id: auth.id} })
+      .then($user => {
         // Chequea que la contraseña este correcta
-        const isPass = bcrypt.compareSync(oldUser.password, user.password );
+        const isPass = bcrypt.compareSync(password, $user.password );
         if (!isPass)
           throw new Error()
         // Si pasa el chequeo, busco actualizar
-        return users.update({...newUser,lastLoginAt: Date.now()}, { where: { id: auth.id, userName: oldUser.userName, email: oldUser.email }})
+        return users.update({...user,lastLoginAt: Date.now()}, { where: { id: auth.id }})
           .then( updatedUser => {
           // Si no encuentra (por alguna razon) tira error
           if (updatedUser[0] === 0) throw new Error();
           // Si actualiza, Crea el nuevo Token
-          const token = jwt.sign({ id: auth.id, userName: newUser.userName }, process.env.JWT_SECRET, { expiresIn: '1h' });
+          const token = jwt.sign({ id: auth.id, userName: user.userName }, process.env.JWT_SECRET, { expiresIn: '1h' });
           // Retorno el objeto.
             return ({
               token,
-              userName: newUser.userName
+              userName: user.userName
             })
         });
       }).catch(err => new Error(errors.LOG_04+" "+err)); // si al buscar el user no lo encuentra
