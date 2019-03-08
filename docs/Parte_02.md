@@ -37,6 +37,7 @@ Que deberian tener los usuarios ?
 | --- | ------- | --- | ---------- |
 | id | Int/ID | INTEGER | asignado por la DB, autoincremental |
 | nombre | String | STRING | Unico |
+| createdAt | String | DATE | Datetime |
 | | | | |
 | postsCount | Int | getPosts.length | Cantidad de Post |
 | posts | [Post] | Tag belongsToMany Post | Relación con Posts |
